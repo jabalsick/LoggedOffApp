@@ -12,25 +12,27 @@
         android:background="@color/colorPrimaryUltraDark">
     <ImageView
     android:id="@+id/profile_picture"
-    android:layout_width="100dp"
-    android:layout_height="120dp" android:layout_margin="10dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" android:layout_margin="10dp"
     android:scaleType="centerInside"
+        android:layout_weight="0.7"
     android:src="@drawable/default_user_picture"
     android:background="@color/colorPrimaryUltraDark"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_weight="0.3">
             <!--buttons-->
 
         <com.fdv.loggedoff.Views.CustomTextView
+            app:typeface="Roboto_Medium"
             android:id="@+id/profile_user_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:text="Otro Diego"
-            android:gravity="left"
+            android:gravity="center"
             android:layout_weight="2"
-            android:singleLine="true"
             android:layout_marginTop="25dp"
             android:textColor="@color/colorAccent"
             android:textSize="20sp"/>
@@ -55,16 +57,14 @@
                     android:tint="@color/mb_white"
                     android:scaleType="centerInside"
                     />
-                <ImageButton
-                    android:id="@+id/btnGallery"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:padding="8dp"
-                    android:layout_weight="1"
-                    android:tint="@color/mb_white"
-                    android:src="@drawable/gallery"
-                    android:scaleType="centerInside" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/mb_white">
+
+                </View>
                 <ImageButton
                     android:id="@+id/btnRemove"
                     android:layout_width="match_parent"
@@ -75,7 +75,6 @@
                     android:background="@android:color/transparent"
                     android:tint="@color/mb_white"
                     android:scaleType="centerInside"/>
-
             </LinearLayout>
         </LinearLayout>
 
@@ -87,6 +86,7 @@
    <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+       android:layout_marginTop="8dp"
     android:orientation="vertical">
     <!--NAME-->
     <LinearLayout
@@ -116,11 +116,6 @@
                 android:layout_marginRight="4dp"
                 />
         </android.support.design.widget.TextInputLayout>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:alpha="0.5"
-            android:src="@drawable/ic_border_color_black_24dp"/>
     </LinearLayout>
     <!--EMAIL-->
     <LinearLayout
@@ -150,11 +145,6 @@
                 android:layout_marginRight="4dp"
                 />
         </android.support.design.widget.TextInputLayout>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:alpha="0.6"
-            android:src="@drawable/ic_lock_outline_black_24dp"/>
     </LinearLayout>
     <!--NOTIFICATIONS-->
     <LinearLayout

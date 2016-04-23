@@ -81,7 +81,7 @@ public class MainActivity extends BaseActivity {
 
     public void showDialog(){
        signUpDialog = new EasyDialog(MainActivity.this)
-                .setLayoutResourceId(R.layout.test_dialog)
+                .setLayoutResourceId(R.layout.sign_up_dialog)
                 .setBackgroundColor(MainActivity.this.getResources().getColor(R.color.background_color_purple))
                 .setLocationByAttachedView(mSignup)
                 .setAnimationTranslationShow(EasyDialog.DIRECTION_Y, 1000, -800, 100, -50, 50, 0)

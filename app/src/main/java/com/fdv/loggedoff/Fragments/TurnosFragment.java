@@ -32,8 +32,7 @@ import java.util.Map;
 public class TurnosFragment extends Fragment {
 
     private View rootView;
-    private RecyclerView mListView;
-  //  private Firebase mSchedulerFirebase = new Firebase(getResources().getString(R.string.firebase_url) + "/horas");;
+    private RecyclerView turnosRecycler;
     private FirebaseRecyclerViewAdapter<Turno,TurnoHolder> turnoAdapter;
 
     public TurnosFragment() {
@@ -46,8 +45,7 @@ public class TurnosFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_turnos, container, false);
-        mListView = (RecyclerView)rootView.findViewById(R.id.my_list_view);
-       // mSchedulerFirebase = new Firebase(getResources().getString(R.string.firebase_url) + "/horas");
+        turnosRecycler = (RecyclerView)rootView.findViewById(R.id.my_turn_recycler_view);
 
         turnoAdapter = new FirebaseRecyclerViewAdapter<Turno,TurnoHolder>(Turno.class,R.layout.turn_layout,TurnoHolder.class,
                 ((PrincipalActivity)getActivity()).getSchedulerFirebase()) {
@@ -56,24 +54,25 @@ public class TurnosFragment extends Fragment {
 
 
                 turnoHolder.linearCard.setTag(turno.getHora());
-                turnoHolder.personNameView.setText(turno.getNombre());
-                turnoHolder.personTurnView.setText(turno.getHora());
 
+                turnoHolder.personTurnView.setText(turno.getHora());
                 if(turno.getNombre().equals("LIBRE")){
+                    //TURNO LIBRE
 //                    if(hasAssigment()){
 //                        turnoHolder.btnTakeTurn.setVisibility(View.GONE);
 //                    }else{
                     turnoHolder.btnTakeTurn.setVisibility(View.VISIBLE);
-
+                    turnoHolder.personNameView.setText("LIBRE");
                     turnoHolder.imageView.setVisibility(View.GONE);
                     turnoHolder.btnCancelar.setVisibility(View.GONE);
                     turnoHolder.btnAvisar.setVisibility(View.GONE);
 
                 }else{
 
-
                     turnoHolder.imageView.setVisibility(View.VISIBLE);
                     if (((PrincipalActivity) getActivity()).getmUser().getUid().equals(turno.getUid())) {
+                        //USUARIO LOGUEADO
+                        turnoHolder.personNameView.setText(((PrincipalActivity) getActivity()).getmUser().getName());
 
                         if(((PrincipalActivity) getActivity()).getmUser().getProfile_photo().equals
                                 (((PrincipalActivity) getActivity()).DEFAULT_PHOTO)){
@@ -94,6 +93,9 @@ public class TurnosFragment extends Fragment {
                         turnoHolder.btnCancelar.setVisibility(View.VISIBLE);
                         turnoHolder. btnAvisar.setVisibility(View.GONE);
                     }else{
+
+                        turnoHolder.personNameView.setText(((PrincipalActivity) getActivity()).getAllAppUsers().
+                                get(turno.getUid()).getName());
                         if(((PrincipalActivity) getActivity()).getAllAppUsers().
                                 get(turno.getUid()).getProfile_photo().equals
                                 (((PrincipalActivity) getActivity()).DEFAULT_PHOTO)){
@@ -115,22 +117,9 @@ public class TurnosFragment extends Fragment {
                         turnoHolder.btnAvisar.setVisibility(View.VISIBLE);
                         turnoHolder. btnCancelar.setVisibility(View.GONE);
 
-
                     }
                     turnoHolder.btnTakeTurn.setVisibility(View.GONE);
 
-                 /*   if(turno.getProfile_photo().equals(((PrincipalActivity) getActivity()).DEFAULT_PHOTO)){
-                        Glide.with(TurnosFragment.this)
-                                .load(R.drawable.default_user_picture)
-                                .bitmapTransform(new CropCircleTransformation(getActivity()))
-                                .into( turnoHolder.imageView);
-                    }else{
-
-                        Glide.with(TurnosFragment.this)
-                                .load(turno.getProfile_photo())
-                                .bitmapTransform(new CropCircleTransformation(getActivity()))
-                                .into(  turnoHolder.imageView);
-                    }*/
                 }
 
 
@@ -163,9 +152,9 @@ public class TurnosFragment extends Fragment {
         };
 
 
-        mListView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        turnosRecycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
-        mListView.setAdapter(turnoAdapter);
+        turnosRecycler.setAdapter(turnoAdapter);
 
         return rootView;
     }

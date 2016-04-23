@@ -63,7 +63,6 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
         email = (AutoCompleteTextView) rootView.findViewById(R.id.email);
         notif_switch = (Switch) rootView.findViewById(R.id.switch_notification);
         btnNewPhoto =(ImageButton) rootView.findViewById(R.id.btnNewPhoto);
-        btnGallery=(ImageButton) rootView.findViewById(R.id.btnGallery);
         btnRemovePhoto =(ImageButton) rootView.findViewById(R.id.btnRemove);
         profileName =  (CustomTextView) rootView.findViewById(R.id.profile_user_name);
         user = ((PrincipalActivity ) getActivity()).getmUser();
@@ -136,9 +135,6 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
     public void onClick(View v) {
 
         if(v == btnNewPhoto){
-/*            Intent i = new Intent();
-            i.setClass(this.getActivity(), UploadActivity.class);
-            this.getActivity().startActivity(i);*/
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -150,7 +146,11 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
         }
 
         if(v == btnRemovePhoto){
-
+            Glide.with(this)
+                    .load(R.drawable.default_user_picture)
+                    .bitmapTransform(new CropCircleTransformation(getActivity()))
+                    .into( profilePicture);
+            user.setProfilePhoto(DEFAULT_PHOTO);
         }
 
     }

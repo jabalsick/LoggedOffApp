@@ -57,9 +57,6 @@
                 android:textColor="@color/mb_white"
                 android:text="HOLA APELLIDO"/>
         </LinearLayout>
-
-
-
         <!--buttons-->
         <LinearLayout
             android:id="@+id/linear_buttons"
