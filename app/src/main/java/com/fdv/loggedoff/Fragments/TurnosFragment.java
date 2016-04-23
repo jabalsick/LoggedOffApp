@@ -18,7 +18,6 @@ import com.fdv.loggedoff.Activtys.BaseActivity;
 import com.fdv.loggedoff.Activtys.PrincipalActivity;
 import com.fdv.loggedoff.Model.Turno;
 import com.fdv.loggedoff.R;
-import com.fdv.loggedoff.Utils.CropCircleTransformation;
 import com.firebase.client.Firebase;
 import com.firebase.ui.FirebaseRecyclerViewAdapter;
 
@@ -36,14 +35,13 @@ public class TurnosFragment extends Fragment {
     private FirebaseRecyclerViewAdapter<Turno,TurnoHolder> turnoAdapter;
 
     public TurnosFragment() {
-        // Required empty public constructor
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         rootView = inflater.inflate(R.layout.fragment_turnos, container, false);
         turnosRecycler = (RecyclerView)rootView.findViewById(R.id.my_turn_recycler_view);
 
@@ -61,14 +59,15 @@ public class TurnosFragment extends Fragment {
 //                    if(hasAssigment()){
 //                        turnoHolder.btnTakeTurn.setVisibility(View.GONE);
 //                    }else{
-                    turnoHolder.btnTakeTurn.setVisibility(View.VISIBLE);
+                    turnoHolder.turnBody.setBackground(getResources().getDrawable(R.drawable.sign_button));
                     turnoHolder.personNameView.setText("LIBRE");
+                   turnoHolder.linearButtons.setVisibility(View.GONE);
                     turnoHolder.imageView.setVisibility(View.GONE);
-                    turnoHolder.btnCancelar.setVisibility(View.GONE);
-                    turnoHolder.btnAvisar.setVisibility(View.GONE);
 
                 }else{
 
+                    turnoHolder.turnBody.setBackgroundColor(getResources().getColor(R.color.transparent_background));
+                    turnoHolder.linearButtons.setVisibility(View.VISIBLE);
                     turnoHolder.imageView.setVisibility(View.VISIBLE);
                     if (((PrincipalActivity) getActivity()).getmUser().getUid().equals(turno.getUid())) {
                         //USUARIO LOGUEADO
@@ -79,13 +78,11 @@ public class TurnosFragment extends Fragment {
 
                             Glide.with(TurnosFragment.this)
                                     .load(R.drawable.default_user_picture)
-                                    .bitmapTransform(new CropCircleTransformation(getActivity()))
                                     .into( turnoHolder.imageView);
                         }else{
 
                             Glide.with(TurnosFragment.this)
                                     .load(((PrincipalActivity) getActivity()).getmUser().getProfile_photo())
-                                    .bitmapTransform(new CropCircleTransformation(getActivity()))
                                     .into(  turnoHolder.imageView);
                         }
 
@@ -102,14 +99,13 @@ public class TurnosFragment extends Fragment {
 
                             Glide.with(TurnosFragment.this)
                                     .load(R.drawable.default_user_picture)
-                                    .bitmapTransform(new CropCircleTransformation(getActivity()))
                                     .into( turnoHolder.imageView);
+                           // .bitmapTransform(new CropCircleTransformation(getActivity()))
                         }else{
 
                             Glide.with(TurnosFragment.this)
                                     .load(((PrincipalActivity) getActivity()).getAllAppUsers().
                                             get(turno.getUid()).getProfile_photo())
-                                    .bitmapTransform(new CropCircleTransformation(getActivity()))
                                     .into(  turnoHolder.imageView);
                         }
 
@@ -118,25 +114,17 @@ public class TurnosFragment extends Fragment {
                         turnoHolder. btnCancelar.setVisibility(View.GONE);
 
                     }
-                    turnoHolder.btnTakeTurn.setVisibility(View.GONE);
+
 
                 }
 
 
-                turnoHolder. btnTakeTurn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //revealView(holder.linearButtons);
-                        asignTurn(turnoHolder.linearCard.getTag().toString());
 
-                    }
-                });
 
                 turnoHolder.btnCancelar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //  hideView(holder.linearCard);
-                        freeTurn(turnoHolder.linearCard.getTag().toString(),turnoHolder.personNameView.getText().toString());
+                        freeTurn(turnoHolder.linearCard.getTag().toString(), turnoHolder.personNameView.getText().toString());
                     }
                 });
 
@@ -146,6 +134,15 @@ public class TurnosFragment extends Fragment {
 
                 /*        avisar(personNameView.getText().toString(), btnAvisar.getTag().toString(),
                                 personTurnView.getText().toString());*/
+                    }
+                });
+
+                turnoHolder.linearCard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(turnoHolder.personNameView.getText().toString().equals("LIBRE")){
+                            asignTurn(turnoHolder.linearCard.getTag().toString());
+                        }
                     }
                 });
             }
@@ -164,7 +161,7 @@ public class TurnosFragment extends Fragment {
         super.sendMail(email, aQuienLlama + " : " + ((PrincipalActivity) getActivity()).getmUser().getName()
                 + " te recuerda que a las "
                 + hora + " es tu turno.", "");
-    }*/
+     }*/
 
     public void freeTurn(String horario, String who){
         String hora = horario.replace(":","");
@@ -177,8 +174,6 @@ public class TurnosFragment extends Fragment {
         nombre.put("uid", "EMPTY");
         hourRef.updateChildren(nombre);
 
-
-        //  turnoAdapter.notifyItemRangeChanged(0, turnoAdapter.getItemCount());
         // super.sendMail(mUser.getEmail(),who + " dejó libre el turno de " + horario," ");
     }
     public void asignTurn(String horario){
@@ -190,8 +185,7 @@ public class TurnosFragment extends Fragment {
         nombre.put("mail",((PrincipalActivity) getActivity()).getmUser().getEmail());
         nombre.put("uid", ((PrincipalActivity) getActivity()).getmUser().getUid());
         hourRef.updateChildren(nombre);
-        //  turnoAdapter.notifyItemRangeChanged(0, turnoAdapter.getItemCount());
-    }
+      }
 
     @Override
     public void onDestroy() {
@@ -204,9 +198,9 @@ public class TurnosFragment extends Fragment {
         ImageView imageView;
         LinearLayout linearCard;
         LinearLayout linearButtons;
+        LinearLayout turnBody;
         ImageButton btnAvisar;
         ImageButton btnCancelar;
-        ImageButton btnTakeTurn;
 
         public TurnoHolder(View itemView) {
             super(itemView);
@@ -215,9 +209,9 @@ public class TurnosFragment extends Fragment {
             personTurnView = (TextView) itemView.findViewById(R.id.person_turn);
             imageView = (ImageView) itemView.findViewById(R.id.person_photo);
             linearCard = (LinearLayout) itemView.findViewById(R.id.linear_header);
+            turnBody = (LinearLayout) itemView.findViewById(R.id.turn_body);
             btnAvisar = (ImageButton) itemView.findViewById(R.id.btnAvisar);
             btnCancelar = (ImageButton) itemView.findViewById(R.id.btnCancelar);
-            btnTakeTurn = (ImageButton) itemView.findViewById(R.id.btnTakeTurn);
             linearButtons = (LinearLayout)itemView.findViewById(R.id.linear_buttons);
 
         }

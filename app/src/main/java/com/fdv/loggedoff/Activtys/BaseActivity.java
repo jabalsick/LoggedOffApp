@@ -5,12 +5,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.fdv.loggedoff.Model.Person;
-import com.fdv.loggedoff.R;
 import com.firebase.client.Firebase;
 
 import java.io.UnsupportedEncodingException;
@@ -82,13 +80,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
 
-   //  * Closes the pop up
-
-    public void closePopUp() {
-        ViewGroup currentLayout = (ViewGroup) getWindow().getDecorView().getRootView();
-        View pop_up = findViewById(R.id.pop_up);
-        currentLayout.removeView(pop_up);
-    }
 
     public void showErrorDialog(String message) {
         new AlertDialog.Builder(this)
