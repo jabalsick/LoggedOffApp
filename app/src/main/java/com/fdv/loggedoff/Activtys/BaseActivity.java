@@ -14,6 +14,7 @@ import com.fdv.loggedoff.R;
 import com.firebase.client.Firebase;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -32,11 +33,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     private static final String password = "fdv123456";
     static protected Person mUser;
     public static String DEFAULT_PHOTO ="DEFAULT";
-    public static Firebase userRef  = new Firebase("https://loggedoffapp.firebaseio.com/users");;
-
+    public static Firebase userRef  = new Firebase("https://loggedoffapp.firebaseio.com/users");
+    public static Firebase mSchedulerFirebase = new Firebase("https://loggedoffapp.firebaseio.com/horas");
     public static Person getmUser() {
         return mUser;
     }
+    public static HashMap<String,Person> allAppUsers = new HashMap<>();
+
 
     public static void setmUser(Person mUser) {
         BaseActivity.mUser = mUser;
@@ -167,5 +170,21 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public static void setUserRef(Firebase userRef) {
         BaseActivity.userRef = userRef;
+    }
+
+    public static Firebase getmSchedulerFirebase() {
+        return mSchedulerFirebase;
+    }
+
+    public static void setmSchedulerFirebase(Firebase mSchedulerFirebase) {
+        BaseActivity.mSchedulerFirebase = mSchedulerFirebase;
+    }
+
+    public static HashMap<String, Person> getAllAppUsers() {
+        return allAppUsers;
+    }
+
+    public static void setAllAppUsers(HashMap<String, Person> allAppUsers) {
+        BaseActivity.allAppUsers = allAppUsers;
     }
 }

@@ -33,7 +33,7 @@ public class TurnosFragment extends Fragment {
 
     private View rootView;
     private RecyclerView mListView;
-    private Firebase mSchedulerFirebase;
+  //  private Firebase mSchedulerFirebase = new Firebase(getResources().getString(R.string.firebase_url) + "/horas");;
     private FirebaseRecyclerViewAdapter<Turno,TurnoHolder> turnoAdapter;
 
     public TurnosFragment() {
@@ -47,10 +47,10 @@ public class TurnosFragment extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_turnos, container, false);
         mListView = (RecyclerView)rootView.findViewById(R.id.my_list_view);
-        mSchedulerFirebase = new Firebase(getResources().getString(R.string.firebase_url) + "/horas");
+       // mSchedulerFirebase = new Firebase(getResources().getString(R.string.firebase_url) + "/horas");
 
         turnoAdapter = new FirebaseRecyclerViewAdapter<Turno,TurnoHolder>(Turno.class,R.layout.turn_layout,TurnoHolder.class,
-                mSchedulerFirebase) {
+                ((PrincipalActivity)getActivity()).getSchedulerFirebase()) {
             @Override
             public void populateViewHolder(final TurnoHolder turnoHolder, Turno turno) {
 
@@ -70,18 +70,56 @@ public class TurnosFragment extends Fragment {
                     turnoHolder.btnAvisar.setVisibility(View.GONE);
 
                 }else{
+
+
                     turnoHolder.imageView.setVisibility(View.VISIBLE);
                     if (((PrincipalActivity) getActivity()).getmUser().getUid().equals(turno.getUid())) {
+
+                        if(((PrincipalActivity) getActivity()).getmUser().getProfile_photo().equals
+                                (((PrincipalActivity) getActivity()).DEFAULT_PHOTO)){
+
+                            Glide.with(TurnosFragment.this)
+                                    .load(R.drawable.default_user_picture)
+                                    .bitmapTransform(new CropCircleTransformation(getActivity()))
+                                    .into( turnoHolder.imageView);
+                        }else{
+
+                            Glide.with(TurnosFragment.this)
+                                    .load(((PrincipalActivity) getActivity()).getmUser().getProfile_photo())
+                                    .bitmapTransform(new CropCircleTransformation(getActivity()))
+                                    .into(  turnoHolder.imageView);
+                        }
+
+
                         turnoHolder.btnCancelar.setVisibility(View.VISIBLE);
                         turnoHolder. btnAvisar.setVisibility(View.GONE);
                     }else{
+                        if(((PrincipalActivity) getActivity()).getAllAppUsers().
+                                get(turno.getUid()).getProfile_photo().equals
+                                (((PrincipalActivity) getActivity()).DEFAULT_PHOTO)){
+
+                            Glide.with(TurnosFragment.this)
+                                    .load(R.drawable.default_user_picture)
+                                    .bitmapTransform(new CropCircleTransformation(getActivity()))
+                                    .into( turnoHolder.imageView);
+                        }else{
+
+                            Glide.with(TurnosFragment.this)
+                                    .load(((PrincipalActivity) getActivity()).getAllAppUsers().
+                                            get(turno.getUid()).getProfile_photo())
+                                    .bitmapTransform(new CropCircleTransformation(getActivity()))
+                                    .into(  turnoHolder.imageView);
+                        }
+
                         turnoHolder.btnAvisar.setTag(turno.getMail());
                         turnoHolder.btnAvisar.setVisibility(View.VISIBLE);
                         turnoHolder. btnCancelar.setVisibility(View.GONE);
+
+
                     }
                     turnoHolder.btnTakeTurn.setVisibility(View.GONE);
 
-                    if(turno.getProfile_photo().equals(((PrincipalActivity) getActivity()).DEFAULT_PHOTO)){
+                 /*   if(turno.getProfile_photo().equals(((PrincipalActivity) getActivity()).DEFAULT_PHOTO)){
                         Glide.with(TurnosFragment.this)
                                 .load(R.drawable.default_user_picture)
                                 .bitmapTransform(new CropCircleTransformation(getActivity()))
@@ -92,7 +130,7 @@ public class TurnosFragment extends Fragment {
                                 .load(turno.getProfile_photo())
                                 .bitmapTransform(new CropCircleTransformation(getActivity()))
                                 .into(  turnoHolder.imageView);
-                    }
+                    }*/
                 }
 
 
@@ -125,7 +163,7 @@ public class TurnosFragment extends Fragment {
         };
 
 
-        mListView.setLayoutManager(new GridLayoutManager(getActivity(),2));
+        mListView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
         mListView.setAdapter(turnoAdapter);
 
@@ -142,19 +180,21 @@ public class TurnosFragment extends Fragment {
     public void freeTurn(String horario, String who){
         String hora = horario.replace(":","");
 
-        Firebase hourRef = mSchedulerFirebase.child(hora);
+        Firebase hourRef =  ((PrincipalActivity)getActivity()).getSchedulerFirebase().child(hora);
         Map<String, Object> nombre = new HashMap<String, Object>();
         nombre.put("nombre", "LIBRE");
         nombre.put("profile_photo", "EMPTY");
         nombre.put("mail","EMPTY");
         nombre.put("uid", "EMPTY");
         hourRef.updateChildren(nombre);
+
+
         //  turnoAdapter.notifyItemRangeChanged(0, turnoAdapter.getItemCount());
         // super.sendMail(mUser.getEmail(),who + " dejó libre el turno de " + horario," ");
     }
     public void asignTurn(String horario){
         String hora = horario.replace(":", "");
-        Firebase hourRef =mSchedulerFirebase.child(hora);
+        Firebase hourRef = ((PrincipalActivity)getActivity()).getSchedulerFirebase().child(hora);
         Map<String, Object> nombre = new HashMap<String, Object>();
         nombre.put("nombre", BaseActivity.getmUser().getName());
         nombre.put("profile_photo",((PrincipalActivity) getActivity()).getmUser().getProfile_photo());

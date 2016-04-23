@@ -2,17 +2,23 @@ package com.fdv.loggedoff;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.fdv.loggedoff.Activtys.BaseActivity;
 import com.fdv.loggedoff.Activtys.MainActivity;
+import com.fdv.loggedoff.Model.Person;
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.FirebaseError;
 
-public class SplashScreen extends AppCompatActivity {
+public class SplashScreen extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        setupInitialUsers();
         //thread for splash screen running
         Thread logoTimer = new Thread() {
             public void run() {
@@ -28,5 +34,45 @@ public class SplashScreen extends AppCompatActivity {
         };
         logoTimer.start();
     }
+
+    public void setupInitialUsers() {
+      // Attach an listener to read the data at our users reference
+        userRef.addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Person user = dataSnapshot.getValue(Person.class);
+                allAppUsers.put(user.getUid(),user);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Person user = dataSnapshot.getValue(Person.class);
+                allAppUsers.get(user.getUid()).setUid(user.getUid());
+                allAppUsers.get(user.getUid()).setName(user.getName());
+                allAppUsers.get(user.getUid()).setProfilePhoto(user.getProfile_photo());
+                allAppUsers.get(user.getUid()).setEmail(user.getEmail());
+                allAppUsers.get(user.getUid()).setProvider(user.getProvider());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Person user = dataSnapshot.getValue(Person.class);
+                allAppUsers.remove(user.getUid());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+    }
+
 
 }

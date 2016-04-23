@@ -21,7 +21,6 @@ import com.fdv.loggedoff.Model.Person;
 import com.fdv.loggedoff.R;
 import com.fdv.loggedoff.Utils.CropCircleTransformation;
 import com.fdv.loggedoff.Views.CustomTextView;
-import com.firebase.client.Firebase;
 
 
 /**
@@ -39,7 +38,6 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
     private ImageButton btnNewPhoto;
     private ImageButton btnGallery;
     private ImageButton btnRemovePhoto;
-    private Firebase myProfileRef;
     private String inputName;
     private CustomTextView profileName;
     public ProfileFragment() {

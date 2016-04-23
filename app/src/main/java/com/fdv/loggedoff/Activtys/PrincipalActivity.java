@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import com.fdv.loggedoff.Adapters.PagerAdapter;
 import com.fdv.loggedoff.R;
 import com.fdv.loggedoff.Views.CustomTextView;
+import com.firebase.client.Firebase;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -123,5 +124,10 @@ public class PrincipalActivity  extends BaseActivity  {
 
         userRef.child(mUser.getUid()).setValue(map);
     }
+
+    public Firebase getSchedulerFirebase(){
+        return mSchedulerFirebase;
+    }
+
 
 }
