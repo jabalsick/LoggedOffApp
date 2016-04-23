@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="registrarse">Registrarse...</string>
+    <string name="logueo_fdv">Soo podes loguearte con una cuenta de FDV Solutions.</string>
+    <string name="LoggedOff">LoggedOff</string>
+</resources>
