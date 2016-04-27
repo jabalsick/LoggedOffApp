@@ -9,9 +9,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fdv.loggedoff.Adapters.PagerAdapter;
+import com.fdv.loggedoff.Model.Turno;
 import com.fdv.loggedoff.R;
 import com.fdv.loggedoff.Views.CustomTextView;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -124,8 +128,32 @@ public class PrincipalActivity  extends BaseActivity  {
         map.put("email", mUser.getEmail());
         map.put("profile_photo", mUser.getProfile_photo());
         map.put("provider", "password");
-
+        map.put("isAdmin",mUser.getIsAdmin());
         userRef.child(mUser.getUid()).setValue(map);
+    }
+
+    public void resetScheduler(){
+        mSchedulerFirebase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                for (DataSnapshot turnSnapshot: snapshot.getChildren()) {
+                       Turno mTurno = turnSnapshot.getValue(Turno.class);
+                       String hora = mTurno.getHora().replace(":", "");
+                    Firebase hourRef = getSchedulerFirebase().child(hora);
+                    Map<String, Object> nombre = new HashMap<String, Object>();
+                    nombre.put("hora",mTurno.getHora());
+                    nombre.put("nombre", "LIBRE");
+                    nombre.put("profile_photo", "EMPTY");
+                    nombre.put("mail","EMPTY");
+                    nombre.put("uid", "EMPTY");
+                    hourRef.updateChildren(nombre);
+                }
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
     }
 
     public Firebase getSchedulerFirebase(){
@@ -137,6 +165,10 @@ public class PrincipalActivity  extends BaseActivity  {
         switch (item.getItemId()) {
             case R.id.logout:
                 onBackPressed();
+                return true;
+
+            case R.id.resetScheduler:
+                 resetScheduler();
                 return true;
 
             default:
@@ -151,6 +183,11 @@ public class PrincipalActivity  extends BaseActivity  {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_principal_activity, menu);
+        if(mUser.getIsAdmin().equals("1")){
+            menu.getItem(0).setVisible(true) ;
+        }else{
+            menu.getItem(0).setVisible(false);
+        }
         return true;
     }
 }

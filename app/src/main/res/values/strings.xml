@@ -52,4 +52,6 @@
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="no_account">No account yet? Create one</string>
+    <string name="reset">reset</string>
+    <string name="logout">Logout</string>
 </resources>

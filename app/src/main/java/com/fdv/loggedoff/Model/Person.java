@@ -10,12 +10,25 @@ public class Person {
     String email;
     String provider;
     String profile_photo;
+    String isAdmin;
 
    public Person(){}
 
    public Person(String name) {
         this.name = name;
 
+    }
+
+    public void setProfile_photo(String profile_photo) {
+        this.profile_photo = profile_photo;
+    }
+
+    public String getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(String isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
     public String getName() {

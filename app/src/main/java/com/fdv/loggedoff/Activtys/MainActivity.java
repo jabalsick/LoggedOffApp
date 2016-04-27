@@ -281,6 +281,7 @@ public class MainActivity extends BaseActivity {
                 map.put("email", email);
                 map.put("provider", "password");
                 map.put("profile_photo", temp_profile_photo);
+                map.put("isAdmin",0);
 
                 mFirebaseRef.child("users").child(uid).setValue(map);
                 Toast.makeText(getBaseContext(), "Listo para loguearte!!!", Toast.LENGTH_LONG).show();
