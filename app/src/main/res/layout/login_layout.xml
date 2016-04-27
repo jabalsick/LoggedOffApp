@@ -14,13 +14,18 @@
             android:layout_height="match_parent" android:orientation="vertical"
             android:background="#FFFFFF"
             android:weightSum="1">
+        <View
+           android:layout_width="match_parent"
+           android:layout_height="0dp"
+            android:layout_weight="0.2">
+        </View>
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:src="@drawable/disconnect_app"
                 android:layout_gravity="start"
-                android:layout_weight="0.4" />
+                android:layout_weight="0.2" />
 
        <LinearLayout
            android:layout_width="match_parent"

@@ -9,22 +9,26 @@
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_height="120dp"
-        android:background="@color/colorPrimaryUltraDark">
-    <ImageView
-    android:id="@+id/profile_picture"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" android:layout_margin="10dp"
-    android:scaleType="centerInside"
-        android:layout_weight="0.7"
-    android:src="@drawable/default_user_picture"
-    android:background="@color/colorPrimaryUltraDark"/>
+        android:background="@color/colorPrimaryUltraDark"
+        android:weightSum="10">
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="2">
+          <ImageView
+              android:id="@+id/profile_picture"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:scaleType="centerInside"
+              android:src="@drawable/pablo"
+              android:background="@color/colorPrimaryUltraDark" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_weight="0.3">
-            <!--buttons-->
-
+            android:layout_weight="8">
         <com.fdv.loggedoff.Views.CustomTextView
             app:typeface="Roboto_Medium"
             android:id="@+id/profile_user_name"
@@ -32,26 +36,25 @@
             android:layout_height="0dp"
             android:text="Otro Diego"
             android:gravity="center"
-            android:layout_weight="2"
-            android:layout_marginTop="25dp"
             android:textColor="@color/colorAccent"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="4"/>
             <LinearLayout
                 android:id="@+id/linear_buttons"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:orientation="horizontal"
-                android:layout_gravity="end"
+                android:layout_gravity="bottom|right"
                 android:background="@drawable/sign_button"
                 android:gravity="center"
-                android:visibility="visible">
+               >
 
                 <ImageButton
                     android:id="@+id/btnNewPhoto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="8dp"
+                    android:padding="10dp"
                     android:background="@android:color/transparent"
                     android:src="@drawable/ic_add_a_photo_black"
                     android:tint="@color/mb_white"
@@ -70,7 +73,6 @@
                     android:layout_width="match_parent"
                     android:src="@drawable/ic_delete_black"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:padding="8dp"
                     android:background="@android:color/transparent"
                     android:tint="@color/mb_white"
