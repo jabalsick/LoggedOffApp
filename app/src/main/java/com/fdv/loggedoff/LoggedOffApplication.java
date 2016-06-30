@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 
 import com.cloudinary.Cloudinary;
-import com.firebase.client.Firebase;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +19,6 @@ public class LoggedOffApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-        Firebase.setAndroidContext(this);
         initCloudinary();
 
     }

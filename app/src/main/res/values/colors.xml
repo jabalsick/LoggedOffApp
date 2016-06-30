@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#9B26AF</color>
+    <color name="colorPrimary">#329BFA</color>
 
-    <color name="colorPrimaryDark">#7A1EA1</color>
-    <color name="colorPrimaryUltraDark">#691A99</color>
+    <color name="colorPrimaryDark">#2382DC</color>
+    <color name="colorPrimaryUltraDark">#2382DC</color>
     <color name="colorAccent">#68EFAD</color>
     <color name="colorAccentForIcons">#1B5E20</color>
     <color name="dark">#FF222222</color>
@@ -45,5 +45,8 @@
     <color name="outside_color_trans">#00000000</color>
     <color name="outside_color_gray">#66444444</color>
     <color name="outside_color_pink">#66E7b8f1</color>
+
+    <color  name="fdv_color_light">#329BFA</color>
+    <color name="fdv_color_dark">#2382DC</color>
 
 </resources>

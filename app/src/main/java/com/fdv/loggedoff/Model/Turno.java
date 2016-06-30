@@ -1,9 +1,15 @@
 package com.fdv.loggedoff.Model;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+import java.util.HashMap;
+import java.util.Map;
 /**
  * Created by blaja on 21/10/2015.
  */
-public class Turno {
+
+@IgnoreExtraProperties
+public class    Turno {
   //  private int pos;
     private String nombre;
     private String hora;
@@ -61,4 +67,16 @@ public class Turno {
     public void setUid(String uid) {
         this.uid = uid;
     }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("uid", uid);
+        result.put("nombre", nombre);
+        result.put("profile_photo", profile_photo);
+        result.put("mail", mail);
+
+        return result;
+    }
+
 }

@@ -2,7 +2,9 @@ package com.fdv.loggedoff.Fragments;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,13 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 
 import com.bumptech.glide.Glide;
+import com.fdv.loggedoff.Activtys.BaseActivity;
 import com.fdv.loggedoff.Activtys.PrincipalActivity;
-import com.fdv.loggedoff.Activtys.UploadActivity;
 import com.fdv.loggedoff.Model.Person;
 import com.fdv.loggedoff.R;
 import com.fdv.loggedoff.Utils.CropCircleTransformation;
@@ -32,12 +35,14 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
     private ImageView profilePicture;
     private static Person user;
     public static String DEFAULT_PHOTO ="DEFAULT";
+    public static final String MY_PREFS_NAME = "LoggedOffProfile";
+    public static final int MODE_PRIVATE = 0;
     private AutoCompleteTextView name;
-    private AutoCompleteTextView email;
     private Switch notif_switch;
     private ImageButton btnNewPhoto;
     private ImageButton btnGallery;
     private ImageButton btnRemovePhoto;
+    private Button btnSave;
     private String inputName;
     private CustomTextView profileName;
     public ProfileFragment() {
@@ -57,37 +62,59 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
 
 
     private void initUI(){
-
         profilePicture =(ImageView) rootView.findViewById(R.id.profile_picture);
         name = (AutoCompleteTextView) rootView.findViewById(R.id.name);
-        email = (AutoCompleteTextView) rootView.findViewById(R.id.email);
         notif_switch = (Switch) rootView.findViewById(R.id.switch_notification);
         btnNewPhoto =(ImageButton) rootView.findViewById(R.id.btnNewPhoto);
         btnRemovePhoto =(ImageButton) rootView.findViewById(R.id.btnRemove);
         profileName =  (CustomTextView) rootView.findViewById(R.id.profile_user_name);
-        user = ((PrincipalActivity ) getActivity()).getmUser();
-        setupProfileImage();
+        btnSave = (Button) rootView.findViewById(R.id.save);
+
+        setupButtonListeners();
+    }
 
 
-        btnNewPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent();
-                i.setClass(v.getContext(), UploadActivity.class);
-                startActivity(i);
-            }
-        });
-        name.setText(user.getName().toString());
-        profileName.setText(user.getName().toString());
+
+    private void initProfileSettings() {
+
+        SharedPreferences prefs = getActivity().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+         name.setText(prefs.getString("name", BaseActivity.getFirebaseUserSignIn().getDisplayName()));
+         profileName.setText(name.getText());
+         notif_switch.setChecked(prefs.getBoolean("notification", true));
+
         setNameListener();
-
-        email.setText(user.getEmail().toString());
-        email.setEnabled(false);
 
         notif_switch.setTextOn(getResources().getString(R.string.on));
         notif_switch.setTextOff(getResources().getString(R.string.off));
+
+        Glide.with(this)
+                .load(BaseActivity.getFirebaseUserSignIn().getPhotoUrl())
+                .bitmapTransform(new CropCircleTransformation(getActivity()))
+                .into( profilePicture);
+
     }
 
+    private void setupButtonListeners() {
+        btnNewPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                SharedPreferences.Editor editor = getActivity().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+                editor.putString("name", profileName.getText().toString() );
+                editor.putBoolean("notification", notif_switch.isChecked());
+                editor.commit();
+            }
+        });
+    }
 
     public void setNameListener(){
         name.addTextChangedListener(new TextWatcher() {
@@ -101,7 +128,6 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
                 inputName = s.toString();
                 if (inputName.length() > 0) {
                     profileName.setText(inputName);
-                    user.setName(inputName);
                 }
             }
 
@@ -112,24 +138,7 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
             }
         });
     }
-    public void setupProfileImage(){
-        if(user.getProfile_photo()
-                .equals(DEFAULT_PHOTO)){
-            Glide.with(this)
-                    .load(R.drawable.default_user_picture)
-                    .bitmapTransform(new CropCircleTransformation(getActivity()))
-                    .into( profilePicture);
-        }else{
 
-            Glide.with(this)
-                    .load(user.getProfile_photo())
-                    .bitmapTransform(new CropCircleTransformation(getActivity()))
-                    .into(profilePicture);
-
-
-
-     }
-    }
 
     @Override
     public void onClick(View v) {
@@ -158,8 +167,16 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
     @Override
     public void onResume() {
         super.onResume();
-        setupProfileImage();
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initProfileSettings();
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
 }

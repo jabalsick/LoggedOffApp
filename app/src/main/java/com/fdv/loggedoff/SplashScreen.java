@@ -3,13 +3,9 @@ package com.fdv.loggedoff;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
 import com.fdv.loggedoff.Activtys.BaseActivity;
-import com.fdv.loggedoff.Activtys.MainActivity;
-import com.fdv.loggedoff.Model.Person;
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
+import com.fdv.loggedoff.Activtys.LoginActivity;
+
 
 public class SplashScreen extends BaseActivity {
 
@@ -18,7 +14,7 @@ public class SplashScreen extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        setupInitialUsers();
+  //      setupInitialUsers();
         //thread for splash screen running
         Thread logoTimer = new Thread() {
             public void run() {
@@ -27,7 +23,7 @@ public class SplashScreen extends BaseActivity {
                 } catch (InterruptedException e) {
                     Log.d("Exception", "Exception" + e);
                 } finally {
-                    startActivity(new Intent(SplashScreen.this, MainActivity.class));
+                    startActivity(new Intent(SplashScreen.this, LoginActivity.class));
                 }
                 finish();
             }
@@ -35,7 +31,7 @@ public class SplashScreen extends BaseActivity {
         logoTimer.start();
     }
 
-    public void setupInitialUsers() {
+   /* public void setupInitialUsers() {
       // Attach an listener to read the data at our users reference
         userRef.addChildEventListener(new ChildEventListener() {
 
@@ -73,6 +69,6 @@ public class SplashScreen extends BaseActivity {
         });
 
     }
-
+*/
 
 }

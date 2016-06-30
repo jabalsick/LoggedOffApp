@@ -15,12 +15,9 @@ import android.widget.Toast;
 
 import com.fdv.loggedoff.Model.Person;
 import com.fdv.loggedoff.R;
-import com.firebase.client.AuthData;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
-import com.michael.easydialog.EasyDialog;
+
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,20 +27,30 @@ public class MainActivity extends BaseActivity {
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private Button signInButton;
-    private Firebase mFirebaseRef;
     private TextView mSignup;
     /* Data from the authenticated user */
-    private AuthData mAuthData;
+ //    private AuthData mAuthData;
     String temp_profile_photo = DEFAULT_PHOTO;
-    static EasyDialog signUpDialog;
     private ImageView loading;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_layout);
         mUser = null;
-        mFirebaseRef = new Firebase(getResources().getString(R.string.firebase_url));
+        
+        // [START config_signin]
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        // [END config_signin]
+
+
+
         initLayout();
+
+
 
     }
 
@@ -60,7 +67,7 @@ public class MainActivity extends BaseActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+             //   attemptLogin();
 
             }
         });
@@ -80,20 +87,11 @@ public class MainActivity extends BaseActivity {
 
 
     public void showDialog(){
-       signUpDialog = new EasyDialog(MainActivity.this)
-                .setLayoutResourceId(R.layout.sign_up_dialog)
-                .setBackgroundColor(MainActivity.this.getResources().getColor(R.color.background_color_purple))
-                .setLocationByAttachedView(mSignup)
-                .setAnimationTranslationShow(EasyDialog.DIRECTION_Y, 1000, -800, 100, -50, 50, 0)
-                .setAnimationTranslationDismiss(EasyDialog.DIRECTION_Y, 500, 0, -800)
-                .setGravity(EasyDialog.GRAVITY_TOP)
-                .setTouchOutsideDismiss(true)
-                .setMatchParent(true)
-                .setMarginLeftAndRight(24,24)
-                .setOutsideColor(MainActivity.this.getResources().getColor(R.color.outside_color_pink))
-                .show();
+
     }
 
+    /*
+     OLD AUTHENTICATION
     private void attemptLogin() {
         // Reset errors.
         mEmailView.setError(null);
@@ -120,12 +118,12 @@ public class MainActivity extends BaseActivity {
             cancel = true;
         }
         // Check for a valid email address.
-     /*   if (!isValidFdvMail(email)) {
+     *//*   if (!isValidFdvMail(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
             message = getString(R.string.logueo_fdv);
-        }*/
+        }*//*
 
 
         if (cancel) {
@@ -186,7 +184,7 @@ public class MainActivity extends BaseActivity {
 
         }
 
-    }
+    }*/
 
 
     private boolean isValidFdvMail(String email) {
@@ -212,10 +210,15 @@ public class MainActivity extends BaseActivity {
     }
 
 
+/*
 
-    /**
+    */
+/**
+ *
+ * OLD AUTHENTICATION
      * Once a user is logged in, take the mAuthData provided from Firebase and "use" it.
-     */
+     *//*
+
     private void setAuthenticatedUser(AuthData authData) {
         if (authData != null) {
 
@@ -225,13 +228,17 @@ public class MainActivity extends BaseActivity {
 
         }
         this.mAuthData = authData;
-        /* invalidate options menu to hide/show the logout button */
+        */
+/* invalidate options menu to hide/show the logout button *//*
+
         supportInvalidateOptionsMenu();
     }
 
-    /**
+    */
+/**
      * Utility class for authentication results
-     */
+     *//*
+
     private class AuthResultHandler implements Firebase.AuthResultHandler {
 
         private final String provider;
@@ -270,8 +277,10 @@ public class MainActivity extends BaseActivity {
         mFirebaseRef.createUser(email, pass, new Firebase.ValueResultHandler<Map<String, Object>>() {
             @Override
             public void onSuccess(Map<String, Object> result) {
-             /*   Snackbar.make(signInButton, "Usuario creado con éxito!", Snackbar.LENGTH_SHORT)
-                        .setAction("Action", null).show();*/
+             */
+/*   Snackbar.make(signInButton, "Usuario creado con éxito!", Snackbar.LENGTH_SHORT)
+                        .setAction("Action", null).show();*//*
+
                 // Authentication just completed successfully :)
                 String uid = result.get("uid").toString();
 
@@ -297,6 +306,7 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+*/
 
 
 

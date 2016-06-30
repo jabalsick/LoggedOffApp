@@ -1,6 +1,7 @@
 package com.fdv.loggedoff.Activtys;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
@@ -12,10 +13,13 @@ import com.fdv.loggedoff.Adapters.PagerAdapter;
 import com.fdv.loggedoff.Model.Turno;
 import com.fdv.loggedoff.R;
 import com.fdv.loggedoff.Views.CustomTextView;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +35,7 @@ public class PrincipalActivity  extends BaseActivity  {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.mipmap.icon_app2);
+        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
 
 
@@ -59,7 +63,7 @@ public class PrincipalActivity  extends BaseActivity  {
                 viewPager.setCurrentItem(tab.getPosition());
                 if (((CustomTextView) tab.getCustomView()).getText().
                         equals(getResources().getString(R.string.profile))) {
-                    updateUser();
+                   // updateUser();
                 }
 
             }
@@ -140,7 +144,7 @@ public class PrincipalActivity  extends BaseActivity  {
                 for (DataSnapshot turnSnapshot: snapshot.getChildren()) {
                        Turno mTurno = turnSnapshot.getValue(Turno.class);
                        String hora = mTurno.getHora().replace(":", "");
-                    Firebase hourRef = getSchedulerFirebase().child(hora);
+                    DatabaseReference hourRef = getSchedulerFirebase().child(hora);
                     Map<String, Object> nombre = new HashMap<String, Object>();
                     nombre.put("hora",mTurno.getHora());
                     nombre.put("nombre", "LIBRE");
@@ -150,13 +154,16 @@ public class PrincipalActivity  extends BaseActivity  {
                     hourRef.updateChildren(nombre);
                 }
             }
+
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError databaseError) {
+
             }
+
         });
     }
 
-    public Firebase getSchedulerFirebase(){
+    public DatabaseReference getSchedulerFirebase(){
         return mSchedulerFirebase;
     }
 
@@ -164,7 +171,9 @@ public class PrincipalActivity  extends BaseActivity  {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
-                onBackPressed();
+                LoginActivity.setIsSinginOut(true);
+
+                super.onBackPressed();
                 return true;
 
             case R.id.resetScheduler:
@@ -183,11 +192,11 @@ public class PrincipalActivity  extends BaseActivity  {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_principal_activity, menu);
-        if(mUser.getIsAdmin().equals("1")){
+   /*     if(mUser.getIsAdmin().equals("1")){
             menu.getItem(0).setVisible(true) ;
         }else{
             menu.getItem(0).setVisible(false);
-        }
+        }*/
         return true;
     }
 }

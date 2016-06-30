@@ -1,29 +1,30 @@
 package com.fdv.loggedoff.Fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.fdv.loggedoff.Activtys.BaseActivity;
 import com.fdv.loggedoff.Activtys.PrincipalActivity;
 import com.fdv.loggedoff.Model.Turno;
 import com.fdv.loggedoff.R;
-import com.firebase.client.Firebase;
-import com.firebase.ui.FirebaseRecyclerViewAdapter;
+import com.fdv.loggedoff.Utils.CropCircleTransformation;
+import com.fdv.loggedoff.Views.TurnoViewHolder;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,9 +32,10 @@ import java.util.Map;
 public class TurnosFragment extends Fragment {
 
     private View rootView;
+    private Context mContext;
     private RecyclerView turnosRecycler;
-    private FirebaseRecyclerViewAdapter<Turno,TurnoHolder> turnoAdapter;
-
+    private DatabaseReference mDatabase;
+    private FirebaseRecyclerAdapter<Turno,TurnoViewHolder> mAdapter;
     public TurnosFragment() {
     }
 
@@ -43,92 +45,113 @@ public class TurnosFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_turnos, container, false);
+        mContext = rootView.getContext();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         turnosRecycler = (RecyclerView)rootView.findViewById(R.id.my_turn_recycler_view);
+        turnosRecycler.setHasFixedSize(true);
 
-        turnoAdapter = new FirebaseRecyclerViewAdapter<Turno,TurnoHolder>(Turno.class,R.layout.turn_layout,TurnoHolder.class,
-                ((PrincipalActivity)getActivity()).getSchedulerFirebase()) {
+        return rootView;
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+
+        // Set up FirebaseRecyclerAdapter with the Query
+        //Query turnosQuery = getQuery(mDatabase);
+
+        mAdapter = new FirebaseRecyclerAdapter<Turno, TurnoViewHolder>(Turno.class, R.layout.turn_layout,
+                TurnoViewHolder.class, mDatabase.child("horas")) {
+
             @Override
-            public void populateViewHolder(final TurnoHolder turnoHolder, Turno turno) {
+            protected void populateViewHolder(final TurnoViewHolder turnoViewHolder, final Turno turno, final int position) {
+                final DatabaseReference turnoRef = getRef(position);
 
+                turnoViewHolder.linearCard.setTag(turno.getHora());
 
-                turnoHolder.linearCard.setTag(turno.getHora());
-
-                turnoHolder.personTurnView.setText(turno.getHora());
+                turnoViewHolder.personTurnView.setText(turno.getHora());
                 if(turno.getNombre().equals("LIBRE")){
                     //TURNO LIBRE
 //                    if(hasAssigment()){
 //                        turnoHolder.btnTakeTurn.setVisibility(View.GONE);
 //                    }else{
-                    turnoHolder.turnBody.setBackground(getResources().getDrawable(R.drawable.sign_button));
-                    turnoHolder.personNameView.setText("LIBRE");
-                   turnoHolder.linearButtons.setVisibility(View.GONE);
-                    turnoHolder.imageView.setVisibility(View.GONE);
+                 //   turnoViewHolder.btnTakeTurn.setVisibility(View.VISIBLE);
+                    turnoViewHolder.personNameView.setText("LIBRE");
+                    turnoViewHolder.imageView.setVisibility(View.GONE);
+                    turnoViewHolder.btnCancelar.setVisibility(View.GONE);
+                    turnoViewHolder.btnAvisar.setVisibility(View.GONE);
+
+                    turnoViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            asignTurn(turnoViewHolder.linearCard.getTag().toString());
+                        }
+                    });
 
                 }else{
 
-                    turnoHolder.turnBody.setBackgroundColor(getResources().getColor(R.color.transparent_background));
-                    turnoHolder.linearButtons.setVisibility(View.VISIBLE);
-                    turnoHolder.imageView.setVisibility(View.VISIBLE);
-                    if (((PrincipalActivity) getActivity()).getmUser().getUid().equals(turno.getUid())) {
+                    turnoViewHolder.imageView.setVisibility(View.VISIBLE);
+                    if (((PrincipalActivity) getActivity()).getSignInAccount().getUid().equals(turno.getUid())) {
                         //USUARIO LOGUEADO
-                        turnoHolder.personNameView.setText(((PrincipalActivity) getActivity()).getmUser().getName());
+                        turnoViewHolder.personNameView.setText(((PrincipalActivity) getActivity()).getSignInAccount().getDisplayName());
 
-                        if(((PrincipalActivity) getActivity()).getmUser().getProfile_photo().equals
+                        if(((PrincipalActivity) getActivity()).getSignInAccount().getPhotoUrl().equals
                                 (((PrincipalActivity) getActivity()).DEFAULT_PHOTO)){
 
                             Glide.with(TurnosFragment.this)
                                     .load(R.drawable.default_user_picture)
-                                    .into( turnoHolder.imageView);
+                                    .bitmapTransform(new CropCircleTransformation(getActivity()))
+                                    .into( turnoViewHolder.imageView);
                         }else{
 
                             Glide.with(TurnosFragment.this)
-                                    .load(((PrincipalActivity) getActivity()).getmUser().getProfile_photo())
-                                    .into(  turnoHolder.imageView);
+                                    .load(((PrincipalActivity) getActivity()).getSignInAccount().getPhotoUrl())
+                                    .bitmapTransform(new CropCircleTransformation(getActivity()))
+                                    .into(  turnoViewHolder.imageView);
                         }
 
 
-                        turnoHolder.btnCancelar.setVisibility(View.VISIBLE);
-                        turnoHolder. btnAvisar.setVisibility(View.GONE);
+                        turnoViewHolder.btnCancelar.setVisibility(View.VISIBLE);
+                        turnoViewHolder. btnAvisar.setVisibility(View.GONE);
                     }else{
 
-                        turnoHolder.personNameView.setText(((PrincipalActivity) getActivity()).getAllAppUsers().
-                                get(turno.getUid()).getName());
-                        if(((PrincipalActivity) getActivity()).getAllAppUsers().
-                                get(turno.getUid()).getProfile_photo().equals
-                                (((PrincipalActivity) getActivity()).DEFAULT_PHOTO)){
-
+                        turnoViewHolder.personNameView.setText(turno.getNombre());
                             Glide.with(TurnosFragment.this)
                                     .load(R.drawable.default_user_picture)
-                                    .into( turnoHolder.imageView);
-                           // .bitmapTransform(new CropCircleTransformation(getActivity()))
-                        }else{
+                                    .bitmapTransform(new CropCircleTransformation(getActivity()))
+                                    .into( turnoViewHolder.imageView);
 
-                            Glide.with(TurnosFragment.this)
-                                    .load(((PrincipalActivity) getActivity()).getAllAppUsers().
-                                            get(turno.getUid()).getProfile_photo())
-                                    .into(  turnoHolder.imageView);
-                        }
-
-                        turnoHolder.btnAvisar.setTag(turno.getMail());
-                        turnoHolder.btnAvisar.setVisibility(View.VISIBLE);
-                        turnoHolder. btnCancelar.setVisibility(View.GONE);
+                        turnoViewHolder.btnAvisar.setTag(turno.getMail());
+                        turnoViewHolder.btnAvisar.setVisibility(View.VISIBLE);
+                        turnoViewHolder. btnCancelar.setVisibility(View.GONE);
 
                     }
-
+                //    turnoViewHolder.btnTakeTurn.setVisibility(View.GONE);
 
                 }
 
 
-
-
-                turnoHolder.btnCancelar.setOnClickListener(new View.OnClickListener() {
+         /*       turnoViewHolder.btnTakeTurn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        freeTurn(turnoHolder.linearCard.getTag().toString(), turnoHolder.personNameView.getText().toString());
+                        //revealView(holder.linearButtons);
+                        asignTurn(turnoViewHolder.linearCard.getTag().toString());
+
+                    }
+                });*/
+
+                turnoViewHolder.btnCancelar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //  hideView(holder.linearCard);
+                        freeTurn(turnoViewHolder.linearCard.getTag().toString(),turnoViewHolder.personNameView.getText().toString());
                     }
                 });
 
-                turnoHolder.btnAvisar.setOnClickListener(new View.OnClickListener() {
+                turnoViewHolder.btnAvisar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
@@ -136,37 +159,30 @@ public class TurnosFragment extends Fragment {
                                 personTurnView.getText().toString());*/
                     }
                 });
-
-                turnoHolder.linearCard.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(turnoHolder.personNameView.getText().toString().equals("LIBRE")){
-                            asignTurn(turnoHolder.linearCard.getTag().toString());
-                        }
-                    }
-                });
             }
+
+
+                // Determine if the current user has liked this post and set UI accordingly
+             /*   if (model.stars.containsKey(getUid())) {
+                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_24);
+                } else {
+                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_outline_24);
+                }*/
+
+                // Bind Post to ViewHolder, setting OnClickListener for the star button
+
+
         };
+        turnosRecycler.setLayoutManager(new GridLayoutManager(mContext , 2));
+        turnosRecycler.setAdapter(mAdapter);
 
-
-        turnosRecycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-
-        turnosRecycler.setAdapter(turnoAdapter);
-
-        return rootView;
     }
 
-
- /*   public void avisar(String aQuienLlama,String email,String hora){
-        super.sendMail(email, aQuienLlama + " : " + ((PrincipalActivity) getActivity()).getmUser().getName()
-                + " te recuerda que a las "
-                + hora + " es tu turno.", "");
-     }*/
 
     public void freeTurn(String horario, String who){
         String hora = horario.replace(":","");
 
-        Firebase hourRef =  ((PrincipalActivity)getActivity()).getSchedulerFirebase().child(hora);
+        DatabaseReference hourRef =  mDatabase.child("horas").child(hora);
         Map<String, Object> nombre = new HashMap<String, Object>();
         nombre.put("nombre", "LIBRE");
         nombre.put("profile_photo", "EMPTY");
@@ -178,42 +194,13 @@ public class TurnosFragment extends Fragment {
     }
     public void asignTurn(String horario){
         String hora = horario.replace(":", "");
-        Firebase hourRef = ((PrincipalActivity)getActivity()).getSchedulerFirebase().child(hora);
+        DatabaseReference hourRef = mDatabase.child("horas").child(hora);
         Map<String, Object> nombre = new HashMap<String, Object>();
-        nombre.put("nombre", BaseActivity.getmUser().getName());
-        nombre.put("profile_photo",((PrincipalActivity) getActivity()).getmUser().getProfile_photo());
-        nombre.put("mail",((PrincipalActivity) getActivity()).getmUser().getEmail());
-        nombre.put("uid", ((PrincipalActivity) getActivity()).getmUser().getUid());
+        nombre.put("nombre", BaseActivity.getSignInAccount().getDisplayName());
+        nombre.put("profile_photo","SIN FOTO");
+        nombre.put("mail",BaseActivity.getSignInAccount().getEmail());
+        nombre.put("uid", BaseActivity.getSignInAccount().getUid());
         hourRef.updateChildren(nombre);
-      }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        turnoAdapter.cleanup();
     }
 
-    public static class TurnoHolder extends RecyclerView.ViewHolder {
-        TextView personNameView, personTurnView;
-        ImageView imageView;
-        LinearLayout linearCard;
-        LinearLayout linearButtons;
-        LinearLayout turnBody;
-        ImageButton btnAvisar;
-        ImageButton btnCancelar;
-
-        public TurnoHolder(View itemView) {
-            super(itemView);
-
-            personNameView = (TextView) itemView.findViewById(R.id.person_name);
-            personTurnView = (TextView) itemView.findViewById(R.id.person_turn);
-            imageView = (ImageView) itemView.findViewById(R.id.person_photo);
-            linearCard = (LinearLayout) itemView.findViewById(R.id.linear_header);
-            turnBody = (LinearLayout) itemView.findViewById(R.id.turn_body);
-            btnAvisar = (ImageButton) itemView.findViewById(R.id.btnAvisar);
-            btnCancelar = (ImageButton) itemView.findViewById(R.id.btnCancelar);
-            linearButtons = (LinearLayout)itemView.findViewById(R.id.linear_buttons);
-
-        }
-    }
 }

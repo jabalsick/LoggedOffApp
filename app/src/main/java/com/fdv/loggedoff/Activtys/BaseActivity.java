@@ -9,7 +9,12 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.fdv.loggedoff.Model.Person;
-import com.firebase.client.Firebase;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -30,12 +35,20 @@ public abstract class BaseActivity extends AppCompatActivity {
     private static final String username = "masajes.fdv@gmail.com";
     private static final String password = "fdv123456";
     static protected Person mUser;
+    // [START declare_auth]
+    static protected FirebaseAuth mAuth;
+    // [END declare_auth]
+    static protected FirebaseUser signInAccount;
     public static String DEFAULT_PHOTO ="DEFAULT";
-    public static Firebase userRef  = new Firebase("https://loggedoffapp.firebaseio.com/users");
-    public static Firebase mSchedulerFirebase = new Firebase("https://loggedoffapp.firebaseio.com/horas");
+    public static DatabaseReference userRef  = FirebaseDatabase.getInstance().getReference().child("users");
+  //  public static Firebase mSchedulerFirebase = new Firebase("https://loggedoffapp.firebaseio.com/horas");
+
+    public static DatabaseReference mSchedulerFirebase  = FirebaseDatabase.getInstance().getReference();
+
     public static Person getmUser() {
         return mUser;
     }
+
     public static HashMap<String,Person> allAppUsers = new HashMap<>();
 
 
@@ -62,9 +75,15 @@ public abstract class BaseActivity extends AppCompatActivity {
        // overridePendingTransition(R.anim.open_main, R.anim.close_next);
     }
 
+    public static FirebaseUser getFirebaseUserSignIn() {
+        return signInAccount;
+    }
 
+    public static void setFirebaseUserSignIn(FirebaseUser signInAccount) {
+        BaseActivity.signInAccount = signInAccount;
+    }
 
-    public void startAnimation( int resId, int anim) {
+    public void startAnimation(int resId, int anim) {
         View view = findViewById(resId);
         Animation animation = AnimationUtils.loadAnimation(this, anim);
         view.startAnimation(animation);
@@ -155,19 +174,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public static Firebase getUserRef() {
-        return userRef;
+    public static DatabaseReference getUserRef() {
+        return mSchedulerFirebase.child("users");
     }
 
-    public static void setUserRef(Firebase userRef) {
-        BaseActivity.userRef = userRef;
+
+    public static DatabaseReference getmSchedulerFirebase() {
+        return mSchedulerFirebase.child("horas");
     }
 
-    public static Firebase getmSchedulerFirebase() {
-        return mSchedulerFirebase;
-    }
-
-    public static void setmSchedulerFirebase(Firebase mSchedulerFirebase) {
+    public static void setmSchedulerFirebase(DatabaseReference mSchedulerFirebase) {
         BaseActivity.mSchedulerFirebase = mSchedulerFirebase;
     }
 
@@ -177,5 +193,42 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public static void setAllAppUsers(HashMap<String, Person> allAppUsers) {
         BaseActivity.allAppUsers = allAppUsers;
+    }
+
+    public static String getUsername() {
+        return username;
+    }
+
+    public static String getPassword() {
+        return password;
+    }
+
+    public static FirebaseAuth getmAuth() {
+        return mAuth;
+    }
+
+    public static void setmAuth(FirebaseAuth mAuth) {
+        BaseActivity.mAuth = mAuth;
+    }
+
+
+    public static FirebaseUser getSignInAccount() {
+        return signInAccount;
+    }
+
+    public static void setSignInAccount(FirebaseUser signInAccount) {
+        BaseActivity.signInAccount = signInAccount;
+    }
+
+    public static String getDefaultPhoto() {
+        return DEFAULT_PHOTO;
+    }
+
+    public static void setDefaultPhoto(String defaultPhoto) {
+        DEFAULT_PHOTO = defaultPhoto;
+    }
+
+    public static void setUserRef(DatabaseReference userRef) {
+        BaseActivity.userRef = userRef;
     }
 }
