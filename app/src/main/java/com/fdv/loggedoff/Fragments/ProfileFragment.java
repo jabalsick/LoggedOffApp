@@ -64,6 +64,7 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
     private void initUI(){
         profilePicture =(ImageView) rootView.findViewById(R.id.profile_picture);
         name = (AutoCompleteTextView) rootView.findViewById(R.id.name);
+
         notif_switch = (Switch) rootView.findViewById(R.id.switch_notification);
         btnNewPhoto =(ImageButton) rootView.findViewById(R.id.btnNewPhoto);
         btnRemovePhoto =(ImageButton) rootView.findViewById(R.id.btnRemove);
@@ -109,7 +110,7 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
             public void onClick(View v) {
 
                 SharedPreferences.Editor editor = getActivity().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-                editor.putString("name", profileName.getText().toString() );
+                editor.putString("name", profileName.getText().toString());
                 editor.putBoolean("notification", notif_switch.isChecked());
                 editor.commit();
             }
