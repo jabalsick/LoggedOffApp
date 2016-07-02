@@ -59,4 +59,7 @@
 
     <string name="firebase_status_fmt">Firebase User: %s</string>
     <string name="guardar">Guardar</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="already_choose_title">Atención</string>
+    <string name="already_choose_detail">Ya estás anotado para un turno.\nSi es mejor éste horario , desasignate del anterior primero.</string>
 </resources>

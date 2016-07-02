@@ -10,8 +10,7 @@
     android:layout_marginRight ="2dp"
     android:background="@color/colorPrimary"
     android:layout_marginBottom="2dp"
-    android:orientation="horizontal"
-    tools:context=".Activtys.ScheduleActivity">
+    android:orientation="horizontal">
     <ImageView
         android:id="@+id/person_photo"
         android:layout_width="match_parent"
@@ -36,12 +35,13 @@
             <com.fdv.loggedoff.Views.CustomTextView
                 app:typeface="Roboto_Light"
                 android:id="@+id/person_turn"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
+                android:padding="5dp"
                 android:layout_height="wrap_content"
                 android:textColor="@color/mb_white"
                 android:layout_gravity="top"
                 android:gravity="top"
-
+                android:background="@color/transparent_colorPrimaryDark"
                 android:textSize="26sp"
                 android:text="11:00"
                 android:layout_marginTop="8dp" />
@@ -69,7 +69,7 @@
                 android:textSize="14sp"
                 android:layout_weight="3"
                 android:textColor="@color/mb_white"
-                android:text="HOLA APELLIDO"/>
+                android:text="Nombre"/>
             <ImageButton
                 android:id="@+id/btnAvisar"
                 android:layout_width="0dp"

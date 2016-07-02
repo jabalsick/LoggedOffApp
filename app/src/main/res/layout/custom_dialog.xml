@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="#FFFFFF"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="left"
+        android:padding="@dimen/form_padding"
+        android:text="XXXX"
+        android:textColor="@android:color/black"
+        android:textSize="25sp"
+        android:layout_marginTop="@dimen/form_margin"
+        android:layout_marginLeft="@dimen/form_margin"
+        android:layout_marginRight="@dimen/form_margin"
+        />
+
+    <TextView
+       android:layout_marginLeft="@dimen/form_margin"
+        android:layout_marginRight="@dimen/form_margin"
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:gravity="left"
+        android:lineSpacingMultiplier="1.5"
+        android:padding="@dimen/form_padding"
+        android:text="XXXX"
+        android:textColor="@color/text_grey"
+        android:textSize="16sp"
+     />
+
+
+    <Button
+        android:id="@+id/dialogButtonOK"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:theme="@style/BorderlessButton"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="@dimen/form_margin"
+        android:layout_marginRight="@dimen/form_margin"
+        android:layout_marginBottom="@dimen/form_margin"
+        android:text="@string/aceptar"
+        />
+
+</LinearLayout>

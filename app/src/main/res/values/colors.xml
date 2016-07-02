@@ -30,7 +30,7 @@
     <color name="transparent_bg">#fff</color>
 
 
-    <color name="transparent_colorPrimaryDark">#667A1EA1</color>
+    <color name="transparent_colorPrimaryDark">#882382DC</color>
     <color name="transparent_background">#00000000</color>
 
     <color name="background_color_green">#e56bbe7a</color>
@@ -48,5 +48,6 @@
 
     <color  name="fdv_color_light">#329BFA</color>
     <color name="fdv_color_dark">#2382DC</color>
+    <color name="text_grey">#666666</color>
 
 </resources>
