@@ -18,6 +18,7 @@ public class TurnoViewHolder extends RecyclerView.ViewHolder{
 
     public TextView personNameView, personTurnView;
     public ImageView imageView;
+    public ImageView holderImageView;
     public LinearLayout linearCard;
     public LinearLayout linearButtons;
     public LinearLayout turnBody;
@@ -30,6 +31,7 @@ public class TurnoViewHolder extends RecyclerView.ViewHolder{
         personNameView = (TextView) itemView.findViewById(R.id.person_name);
         personTurnView = (TextView) itemView.findViewById(R.id.person_turn);
         imageView = (ImageView) itemView.findViewById(R.id.person_photo);
+        holderImageView = (ImageView) itemView.findViewById(R.id.holder_free_turn);
         linearCard = (LinearLayout) itemView.findViewById(R.id.linear_header);
         turnBody = (LinearLayout) itemView.findViewById(R.id.turn_body);
         btnAvisar = (ImageButton) itemView.findViewById(R.id.btnAvisar);

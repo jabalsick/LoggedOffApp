@@ -41,8 +41,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     static protected FirebaseUser signInAccount;
     public static String DEFAULT_PHOTO ="DEFAULT";
     public static DatabaseReference userRef  = FirebaseDatabase.getInstance().getReference().child("users");
-  //  public static Firebase mSchedulerFirebase = new Firebase("https://loggedoffapp.firebaseio.com/horas");
-
     public static DatabaseReference mSchedulerFirebase  = FirebaseDatabase.getInstance().getReference();
 
     public static Person getmUser() {

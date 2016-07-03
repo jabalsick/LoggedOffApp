@@ -125,26 +125,15 @@ public class PrincipalActivity  extends BaseActivity  {
 
     }
 
-    public void updateUser(){
-        Map<String, Object> map = new HashMap<>();
-        map.put("uid", mUser.getUid());
-        map.put("name", mUser.getName());
-        map.put("email", mUser.getEmail());
-        map.put("profile_photo", mUser.getProfile_photo());
-        map.put("provider", "password");
-        map.put("isAdmin",mUser.getIsAdmin());
-        userRef.child(mUser.getUid()).setValue(map);
-    }
-
     public void resetScheduler(){
-        mSchedulerFirebase.addListenerForSingleValueEvent(new ValueEventListener() {
+        mSchedulerFirebase.child("horas").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
 
                 for (DataSnapshot turnSnapshot: snapshot.getChildren()) {
                        Turno mTurno = turnSnapshot.getValue(Turno.class);
                        String hora = mTurno.getHora().replace(":", "");
-                    DatabaseReference hourRef = getSchedulerFirebase().child(hora);
+                    DatabaseReference hourRef = mSchedulerFirebase.child("horas").child(hora);
                     Map<String, Object> nombre = new HashMap<String, Object>();
                     nombre.put("hora",mTurno.getHora());
                     nombre.put("nombre", "LIBRE");
@@ -164,7 +153,7 @@ public class PrincipalActivity  extends BaseActivity  {
     }
 
     public DatabaseReference getSchedulerFirebase(){
-        return mSchedulerFirebase;
+        return mSchedulerFirebase.child("horas");
     }
 
     @Override

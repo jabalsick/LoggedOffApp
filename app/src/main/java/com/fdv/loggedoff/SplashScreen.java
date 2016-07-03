@@ -31,44 +31,4 @@ public class SplashScreen extends BaseActivity {
         logoTimer.start();
     }
 
-   /* public void setupInitialUsers() {
-      // Attach an listener to read the data at our users reference
-        userRef.addChildEventListener(new ChildEventListener() {
-
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Person user = dataSnapshot.getValue(Person.class);
-                allAppUsers.put(user.getUid(),user);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Person user = dataSnapshot.getValue(Person.class);
-                allAppUsers.get(user.getUid()).setUid(user.getUid());
-                allAppUsers.get(user.getUid()).setName(user.getName());
-                allAppUsers.get(user.getUid()).setProfilePhoto(user.getProfile_photo());
-                allAppUsers.get(user.getUid()).setEmail(user.getEmail());
-                allAppUsers.get(user.getUid()).setProvider(user.getProvider());
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Person user = dataSnapshot.getValue(Person.class);
-                allAppUsers.remove(user.getUid());
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
-
-    }
-*/
-
 }

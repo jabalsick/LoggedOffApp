@@ -70,13 +70,15 @@ public class TurnosFragment extends Fragment {
 
             @Override
             protected void populateViewHolder(final TurnoViewHolder turnoViewHolder, final Turno turno, final int position) {
-                final DatabaseReference turnoRef = getRef(position);
 
                 turnoViewHolder.linearCard.setTag(turno.getHora());
 
                 turnoViewHolder.personTurnView.setText(turno.getHora());
+
                 if(turno.getNombre().equals("LIBRE")){
                     turnoViewHolder.personNameView.setText("LIBRE");
+                    turnoViewHolder.personTurnView.setBackground(null);
+                    turnoViewHolder.holderImageView.setVisibility(View.VISIBLE);
                     turnoViewHolder.imageView.setVisibility(View.GONE);
                     turnoViewHolder.btnCancelar.setVisibility(View.GONE);
                     turnoViewHolder.btnAvisar.setVisibility(View.GONE);
@@ -92,6 +94,8 @@ public class TurnosFragment extends Fragment {
                     });
                 }else{
                     turnoViewHolder.imageView.setVisibility(View.VISIBLE);
+                    turnoViewHolder.holderImageView.setVisibility(View.GONE);
+                    turnoViewHolder.personTurnView.setBackgroundColor(getResources().getColor(R.color.transparent_colorPrimaryDark));
                     if (BaseActivity.getSignInAccount().getUid().equals(turno.getUid())) {
                         hasTurnSelected = true;
                         //USUARIO LOGUEADO
@@ -180,7 +184,7 @@ public class TurnosFragment extends Fragment {
         DatabaseReference hourRef = mDatabase.child("horas").child(hora);
         Map<String, Object> nombre = new HashMap<String, Object>();
         nombre.put("nombre", BaseActivity.getSignInAccount().getDisplayName());
-        nombre.put("profile_photo",BaseActivity.getSignInAccount().getPhotoUrl() != null ?BaseActivity.getSignInAccount().getPhotoUrl():"EMPTY");
+        nombre.put("profile_photo",BaseActivity.getSignInAccount().getPhotoUrl() != null ?BaseActivity.getSignInAccount().getPhotoUrl().toString():"EMPTY");
         nombre.put("mail",BaseActivity.getSignInAccount().getEmail());
         nombre.put("uid", BaseActivity.getSignInAccount().getUid());
         hourRef.updateChildren(nombre);

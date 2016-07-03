@@ -26,6 +26,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -57,8 +58,9 @@ public class LoginActivity extends BaseActivity implements
     // [START declare_auth_listener]
     private FirebaseAuth.AuthStateListener mAuthListener;
     // [END declare_auth_listener]
-
     private static GoogleApiClient mGoogleApiClient;
+    private SignInButton btnSignIn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +68,9 @@ public class LoginActivity extends BaseActivity implements
         setContentView(R.layout.activity_login);
 
         // Button listeners
-        findViewById(R.id.sign_in_button).setOnClickListener(this);
+        btnSignIn = (SignInButton) findViewById(R.id.sign_in_button);
+        btnSignIn.setOnClickListener(this);
+        btnSignIn.setVisibility(View.VISIBLE);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.disconnect_button).setOnClickListener(this);
 
@@ -268,18 +272,6 @@ public class LoginActivity extends BaseActivity implements
     private void goToScheduler(){
         Intent intent = new Intent(getApplicationContext(), PrincipalActivity.class);
         nextScreen(intent);
-     /*   Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        boolean dayOfMasagge = cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY;
-
-        if(dayOfMasagge) {
-            Intent intent = new Intent(getBaseContext(), ScheduleActivity.class);
-            nextScreen(intent);
-        }else{
-            String name =new SimpleDateFormat("EEEE",new Locale("es")).format(cal.getTime());
-
-            showErrorDialog("Hoy no es día de masajes, hoy es " + name);
-        }*/
     }
 
     public static boolean isSinginOut() {

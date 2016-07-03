@@ -8,21 +8,34 @@
     android:gravity="center"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_asset_police"
+            android:layout_marginTop="@dimen/form_margin"
+            android:layout_marginLeft="@dimen/form_margin"
+            android:paddingTop="@dimen/form_padding"
+            android:scaleType="center" />
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="left"
-        android:padding="@dimen/form_padding"
+        android:paddingTop="@dimen/form_padding"
+        android:paddingBottom="@dimen/form_padding"
         android:text="XXXX"
         android:textColor="@android:color/black"
         android:textSize="25sp"
         android:layout_marginTop="@dimen/form_margin"
-        android:layout_marginLeft="@dimen/form_margin"
         android:layout_marginRight="@dimen/form_margin"
         />
-
+    </LinearLayout>
     <TextView
        android:layout_marginLeft="@dimen/form_margin"
         android:layout_marginRight="@dimen/form_margin"
