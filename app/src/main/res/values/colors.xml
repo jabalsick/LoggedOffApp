@@ -49,5 +49,5 @@
     <color  name="fdv_color_light">#329BFA</color>
     <color name="fdv_color_dark">#2382DC</color>
     <color name="text_grey">#666666</color>
-
+    <color name="blackBackground">#A3000000</color>
 </resources>

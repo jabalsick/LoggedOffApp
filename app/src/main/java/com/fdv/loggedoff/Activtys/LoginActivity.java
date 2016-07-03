@@ -18,6 +18,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +62,7 @@ public class LoginActivity extends BaseActivity implements
     // [END declare_auth_listener]
     private static GoogleApiClient mGoogleApiClient;
     private SignInButton btnSignIn;
+    private LinearLayout loading;
 
 
     @Override
@@ -67,10 +70,10 @@ public class LoginActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        loading =(LinearLayout) findViewById(R.id.loading);
         // Button listeners
         btnSignIn = (SignInButton) findViewById(R.id.sign_in_button);
         btnSignIn.setOnClickListener(this);
-        btnSignIn.setVisibility(View.VISIBLE);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.disconnect_button).setOnClickListener(this);
 
@@ -109,9 +112,7 @@ public class LoginActivity extends BaseActivity implements
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
-                // [START_EXCLUDE]
-
-                // [END_EXCLUDE]
+                hideProgressDialog();
             }
         };
         // [END auth_state_listener]
@@ -163,7 +164,7 @@ public class LoginActivity extends BaseActivity implements
     private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
         // [START_EXCLUDE silent]
-      //  showProgressDialog();
+       showProgressDialog();
         // [END_EXCLUDE]
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -185,10 +186,18 @@ public class LoginActivity extends BaseActivity implements
                                     Toast.LENGTH_SHORT).show();
                         }
                         // [START_EXCLUDE]
-                       // hideProgressDialog();
+                      hideProgressDialog();
                         // [END_EXCLUDE]
                     }
                 });
+    }
+
+    private void hideProgressDialog() {
+        loading.setVisibility(View.GONE);
+    }
+
+    private void showProgressDialog() {
+        loading.setVisibility(View.VISIBLE);
     }
     // [END auth_with_google]
 
@@ -228,8 +237,8 @@ public class LoginActivity extends BaseActivity implements
     }
 
     private void updateUI(FirebaseUser user) {
- /*      // hideProgressDialog();
-        if (user != null) {
+       hideProgressDialog();
+     /*     if (user != null) {
             mStatusTextView.setText(getString(R.string.google_status_fmt, user.getEmail()));
             mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
 
