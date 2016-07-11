@@ -1,19 +1,25 @@
 package com.fdv.loggedoff.Activtys;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.fdv.loggedoff.Adapters.PagerAdapter;
 import com.fdv.loggedoff.Model.Turno;
 import com.fdv.loggedoff.R;
 import com.fdv.loggedoff.Views.CustomTextView;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.firebase.database.DataSnapshot;
@@ -21,17 +27,22 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PrincipalActivity  extends BaseActivity  {
+public class PrincipalActivity  extends BaseActivity {
     TabLayout tabLayout;
     Toolbar toolbar;
+    private static GoogleApiClient mGoogleApiClient;
+    static Context mContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
-
+        mContext = getApplicationContext();
+        createGoogleApiClient();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -74,6 +85,22 @@ public class PrincipalActivity  extends BaseActivity  {
             }
         });
 
+    }
+
+    private void createGoogleApiClient() {
+
+        // [START config_signin]
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        // [END config_signin]
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
     }
 
 
@@ -160,9 +187,7 @@ public class PrincipalActivity  extends BaseActivity  {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
-                LoginActivity.setIsSinginOut(true);
-
-                super.onBackPressed();
+                signOut();
                 return true;
 
             case R.id.resetScheduler:
@@ -188,4 +213,20 @@ public class PrincipalActivity  extends BaseActivity  {
         }*/
         return true;
     }
+
+    public void signOut() {
+        // Firebase sign out
+       mAuth.signOut();
+
+        // Google sign out
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+                        finish();
+                    }
+                });
+    }
+
+
 }

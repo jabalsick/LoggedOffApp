@@ -51,12 +51,10 @@ import java.util.Map;
  * Demonstrate Firebase Authentication using a Google ID Token.
  */
 public class LoginActivity extends BaseActivity implements
-        GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
 
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
-    public static boolean isSinginOut = false;
     // [START declare_auth_listener]
     private FirebaseAuth.AuthStateListener mAuthListener;
     // [END declare_auth_listener]
@@ -74,8 +72,6 @@ public class LoginActivity extends BaseActivity implements
         // Button listeners
         btnSignIn = (SignInButton) findViewById(R.id.sign_in_button);
         btnSignIn.setOnClickListener(this);
-        findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.disconnect_button).setOnClickListener(this);
 
         // [START config_signin]
         // Configure Google Sign In
@@ -99,15 +95,13 @@ public class LoginActivity extends BaseActivity implements
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
+                    btnSignIn.setVisibility(View.GONE);
                     // User is signed in
-
-                    if(isSinginOut){
-                        signOut();
-                    }
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     setFirebaseUserSignIn(user);
                     goToScheduler();
                 } else {
+                    btnSignIn.setVisibility(View.VISIBLE);
                    // updateUI(user);
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -175,7 +169,7 @@ public class LoginActivity extends BaseActivity implements
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
                         setFirebaseUserSignIn(mAuth.getCurrentUser());
-                        goToScheduler();
+                    //    goToScheduler();
 
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
@@ -208,21 +202,10 @@ public class LoginActivity extends BaseActivity implements
     }
     // [END signin]
 
-    public static void signOut() {
-        // Firebase sign out
-        mAuth.signOut();
 
-        // Google sign out
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        isSinginOut = false;
-                    }
-                });
-    }
-
-    private void revokeAccess() {
+  /*
+   REVOKE APP ACCESS TO ACOUNT
+   private void revokeAccess() {
         // Firebase sign out
         mAuth.signOut();
 
@@ -234,45 +217,18 @@ public class LoginActivity extends BaseActivity implements
                         updateUI(null);
                     }
                 });
-    }
+    }*/
 
     private void updateUI(FirebaseUser user) {
        hideProgressDialog();
-     /*     if (user != null) {
-            mStatusTextView.setText(getString(R.string.google_status_fmt, user.getEmail()));
-            mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
-
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
-        } else {
-            mStatusTextView.setText("signed_out");
-            mDetailTextView.setText(null);
-
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
-        }*/
-
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
-        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button:
                 signIn();
-                break;
-            case R.id.sign_out_button:
-                signOut();
-                break;
-            case R.id.disconnect_button:
-                revokeAccess();
                 break;
         }
     }
@@ -283,11 +239,5 @@ public class LoginActivity extends BaseActivity implements
         nextScreen(intent);
     }
 
-    public static boolean isSinginOut() {
-        return isSinginOut;
-    }
 
-    public static void setIsSinginOut(boolean isSinginOut) {
-        LoginActivity.isSinginOut = isSinginOut;
-    }
 }
