@@ -92,41 +92,35 @@ public class TurnosFragment extends Fragment {
                             }
                         }
                     });
+
                 }else{
                     turnoViewHolder.imageView.setVisibility(View.VISIBLE);
                     turnoViewHolder.holderImageView.setVisibility(View.GONE);
                     turnoViewHolder.personTurnView.setBackgroundColor(getResources().getColor(R.color.transparent_colorPrimaryDark));
+
+                    turnoViewHolder.personNameView.setText(turno.getNombre());
+
                     if (BaseActivity.getSignInAccount().getUid().equals(turno.getUid())) {
                         hasTurnSelected = true;
-                        //USUARIO LOGUEADO
-                        turnoViewHolder.personNameView.setText(BaseActivity.getSignInAccount().getDisplayName());
-                        BaseActivity.getSignInAccount().getProviderData();
-                        if(turno.getProfile_photo() == DEFAULT_PHOTO){
-                            Glide.with(TurnosFragment.this)
-                                    .load(R.drawable.default_user_picture)
-                                    .into( turnoViewHolder.imageView);
-                        }else{
-                            Glide.with(TurnosFragment.this)
-                                    .load(BaseActivity.getSignInAccount().getPhotoUrl())
-                                    .into(  turnoViewHolder.imageView);
-                        }
-
-
                         turnoViewHolder.btnCancelar.setVisibility(View.VISIBLE);
                         turnoViewHolder. btnAvisar.setVisibility(View.GONE);
-                    }else{
 
-                        turnoViewHolder.personNameView.setText(turno.getNombre());
-                            Glide.with(TurnosFragment.this)
-                                    .load(R.drawable.default_user_picture)
-                                    .bitmapTransform(new CropCircleTransformation(getActivity()))
-                                    .into( turnoViewHolder.imageView);
-
+                    } else{
                         turnoViewHolder.btnAvisar.setTag(turno.getMail());
                         turnoViewHolder.btnAvisar.setVisibility(View.VISIBLE);
-                        turnoViewHolder. btnCancelar.setVisibility(View.GONE);
-
+                        turnoViewHolder.btnCancelar.setVisibility(View.GONE);
                     }
+                    //USUARIO LOGUEADO
+
+                        if(turno.getProfile_photo().equals(DEFAULT_PHOTO)){
+                            Glide.with(TurnosFragment.this)
+                                    .load(R.drawable.assigned)
+                                    .into(turnoViewHolder.imageView);
+                        }else{
+                            Glide.with(TurnosFragment.this)
+                                    .load(turno.getProfile_photo())
+                                    .into(turnoViewHolder.imageView);
+                        }
                 }
 
                  turnoViewHolder.btnCancelar.setOnClickListener(new View.OnClickListener() {
@@ -147,16 +141,6 @@ public class TurnosFragment extends Fragment {
                     }
                 });
             }
-
-
-                // Determine if the current user has liked this post and set UI accordingly
-             /*   if (model.stars.containsKey(getUid())) {
-                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_24);
-                } else {
-                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_outline_24);
-                }*/
-
-                // Bind Post to ViewHolder, setting OnClickListener for the star button
 
 
         };
