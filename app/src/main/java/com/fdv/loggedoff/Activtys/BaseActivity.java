@@ -87,32 +87,6 @@ public abstract class BaseActivity extends AppCompatActivity
         BaseActivity.signInAccount = signInAccount;
     }
 
-    public void startAnimation(int resId, int anim) {
-        View view = findViewById(resId);
-        Animation animation = AnimationUtils.loadAnimation(this, anim);
-        view.startAnimation(animation);
-        view.setVisibility(View.VISIBLE);
-    }
-
-    public void startAnimation( View view, int anim) {
-        Animation animation = AnimationUtils.loadAnimation(this, anim);
-        view.startAnimation(animation);
-        view.setVisibility(View.VISIBLE);
-    }
-
-
-
-
-
-    public void showErrorDialog(String message) {
-        new AlertDialog.Builder(this)
-                .setTitle("Error")
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok, null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-    }
-
 //EMAIL IMPLEMENTATION
     public void sendMail(String email, String subject, String messageBody) {
         Session session = createSessionObject();
