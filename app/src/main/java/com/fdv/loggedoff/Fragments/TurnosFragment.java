@@ -5,24 +5,24 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.fdv.loggedoff.Activtys.BaseActivity;
-import com.fdv.loggedoff.Activtys.PrincipalActivity;
 import com.fdv.loggedoff.Model.Turno;
 import com.fdv.loggedoff.R;
-import com.fdv.loggedoff.Utils.CropCircleTransformation;
 import com.fdv.loggedoff.Utils.NotificationUtils;
 import com.fdv.loggedoff.Views.CustomDialog;
+import com.fdv.loggedoff.Views.ItemDecorationAlbumColumns;
 import com.fdv.loggedoff.Views.TurnoViewHolder;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 import java.util.HashMap;
@@ -33,7 +33,8 @@ import java.util.Map;
  */
 public class TurnosFragment extends Fragment {
 
-    private static final String DEFAULT_PHOTO ="EMPTY" ;
+    private static final String EMPTY_STRING ="EMPTY" ;
+    public static final String FREE_TURN_STRING = "LIBRE";
     private View rootView;
     private Context mContext;
     private RecyclerView turnosRecycler;
@@ -75,7 +76,7 @@ public class TurnosFragment extends Fragment {
                 turnoViewHolder.linearCard.setTag(turno.getHora());
                 turnoViewHolder.personTurnView.setText(turno.getHora());
 
-                if(turno.getNombre().equals("LIBRE")){
+                if(turno.getNombre().equals(FREE_TURN_STRING)){
                     setupLayoutForFreeTurn(turnoViewHolder);
                 }else{
                     setupLayoutForOccupedTurn(turnoViewHolder, turno);
@@ -103,16 +104,23 @@ public class TurnosFragment extends Fragment {
 
         };
         turnosRecycler.setLayoutManager(new GridLayoutManager(mContext , 2));
+        turnosRecycler.addItemDecoration(new ItemDecorationAlbumColumns(
+                getResources().getDimensionPixelSize(R.dimen.turn_list_spacing),2));
         turnosRecycler.setAdapter(mAdapter);
+        turnosRecycler.setItemAnimator(new MyDefaultItemAnimator());
 
     }
 
     private void setupLayoutForOccupedTurn(TurnoViewHolder turnoViewHolder, Turno turno) {
+        turnoViewHolder.itemView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
         turnoViewHolder.imageView.setVisibility(View.VISIBLE);
         turnoViewHolder.holderImageView.setVisibility(View.GONE);
+        turnoViewHolder.personTurnView.setTextColor(getResources().getColor(R.color.mb_white));
         turnoViewHolder.personTurnView.setBackgroundColor(getResources().getColor(R.color.transparent_colorPrimaryDark));
-
+        turnoViewHolder.linearButtons.setBackgroundColor(getResources().getColor(R.color.transparent_colorPrimaryDark));
         turnoViewHolder.personNameView.setText(turno.getNombre());
+        turnoViewHolder.personNameView.setTextColor(getResources().getColor(R.color.mb_white));
 
         if (BaseActivity.getSignInAccount().getUid().equals(turno.getUid())) {
             hasTurnSelected = true;
@@ -126,20 +134,29 @@ public class TurnosFragment extends Fragment {
         }
         //USUARIO LOGUEADO
 
-        if(turno.getProfile_photo().equals(DEFAULT_PHOTO)){
+        if(turno.getProfile_photo().equals(EMPTY_STRING)){
             Glide.with(TurnosFragment.this)
-                    .load(R.drawable.assigned)
+                    .load(R.drawable.chilling)
                     .into(turnoViewHolder.imageView);
         }else{
             Glide.with(TurnosFragment.this)
                     .load(turno.getProfile_photo())
                     .into(turnoViewHolder.imageView);
         }
+        turnoViewHolder.itemView.setOnClickListener(null);
+
     }
 
     private void setupLayoutForFreeTurn(final TurnoViewHolder turnoViewHolder) {
-        turnoViewHolder.personNameView.setText("LIBRE");
-        turnoViewHolder.personTurnView.setBackground(null);
+        turnoViewHolder.itemView.setBackgroundColor(getResources().getColor(R.color.mb_white));
+
+        turnoViewHolder.personNameView.setText(FREE_TURN_STRING);
+        turnoViewHolder.personNameView.setTextColor(getResources().getColor(R.color.colorPrimary));
+        turnoViewHolder.personTurnView.setTextColor(getResources().getColor(R.color.colorPrimary));
+        turnoViewHolder.personTurnView.setBackgroundColor(getResources().getColor(R.color.mb_white));
+
+        turnoViewHolder.linearButtons.setBackgroundColor(getResources().getColor(R.color.mb_white));
+
         turnoViewHolder.holderImageView.setVisibility(View.VISIBLE);
         turnoViewHolder.imageView.setVisibility(View.GONE);
         turnoViewHolder.btnCancelar.setVisibility(View.GONE);
@@ -162,15 +179,13 @@ public class TurnosFragment extends Fragment {
 
         DatabaseReference hourRef =  mDatabase.child("horas").child(hora);
         Map<String, Object> nombre = new HashMap<String, Object>();
-        nombre.put("nombre", "LIBRE");
-        nombre.put("profile_photo", "EMPTY");
-        nombre.put("mail","EMPTY");
-        nombre.put("uid", "EMPTY");
+        nombre.put("nombre", FREE_TURN_STRING);
+        nombre.put("profile_photo",EMPTY_STRING);
+        nombre.put("mail",EMPTY_STRING);
+        nombre.put("uid", EMPTY_STRING);
         hourRef.updateChildren(nombre);
 
-        NotificationUtils.getInstance(getActivity()).sendPersonalizedNotification(who +
-                " dejó libre el turno de " + horario,"Es tu oportunidad "
-                +BaseActivity.getSignInAccount().getDisplayName().toString() + "!");
+
         // super.sendMail(mUser.getEmail(),who + " dejó libre el turno de " + horario," ");
     }
     public void asignTurn(String horario){
@@ -182,7 +197,10 @@ public class TurnosFragment extends Fragment {
         nombre.put("mail",BaseActivity.getSignInAccount().getEmail());
         nombre.put("uid", BaseActivity.getSignInAccount().getUid());
         hourRef.updateChildren(nombre);
+
+        NotificationUtils.scheduleNotification(NotificationUtils.getNotification("Recordatorio","En 5 minutos es tu turno de masajes"),30000);
     }
+
 
 
     public void showAlertMessage(){
@@ -190,5 +208,22 @@ public class TurnosFragment extends Fragment {
              R.string.already_choose_title
             ,R.string.already_choose_detail);
     dialog.show();
+    }
+
+
+
+    public class MyDefaultItemAnimator extends DefaultItemAnimator {
+
+        @Override
+        public void onChangeFinished(RecyclerView.ViewHolder item, boolean oldItem) {
+            super.onChangeFinished(item, oldItem);
+            if(!oldItem){
+                if(((TurnoViewHolder) item).personNameView.getText().equals(FREE_TURN_STRING)){
+
+                    NotificationUtils.getInstance(getActivity()).sendPersonalizedNotification(
+                            "El turno de las " + ((TurnoViewHolder) item).personTurnView.getText() + " está libre",BaseActivity.getSignInAccount().getDisplayName().toString() + "!");
+                }
+            }
+        }
     }
 }

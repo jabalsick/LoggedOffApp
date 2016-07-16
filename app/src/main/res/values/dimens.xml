@@ -29,4 +29,5 @@
     <dimen name="welcome_content">16.0sp</dimen>
     <dimen name="form_margin">10dp</dimen>
     <dimen name="form_padding">10dp</dimen>
+    <dimen name="turn_list_spacing">2dp</dimen>
 </resources>
