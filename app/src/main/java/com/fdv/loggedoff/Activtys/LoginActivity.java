@@ -98,8 +98,10 @@ public class LoginActivity extends BaseActivity implements
                     btnSignIn.setVisibility(View.GONE);
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    setFirebaseUserSignIn(user);
-                    goToScheduler();
+                    if(BaseActivity.signInAccount == null){
+                        setFirebaseUserSignIn(  user);
+                        goToScheduler();
+                    }
                 } else {
                     btnSignIn.setVisibility(View.VISIBLE);
                    // updateUI(user);

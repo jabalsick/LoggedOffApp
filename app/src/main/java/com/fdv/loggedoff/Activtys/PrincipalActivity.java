@@ -223,10 +223,16 @@ public class PrincipalActivity  extends BaseActivity {
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status status) {
+                        BaseActivity.signInAccount = null;
                         finish();
                     }
                 });
+
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        signOut();
+    }
 }
