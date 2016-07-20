@@ -1,0 +1,50 @@
+{
+  "project_info": {
+    "project_number": "1094417358494",
+    "firebase_url": "https://loggedoffapp.firebaseio.com",
+    "project_id": "firebase-loggedoffapp",
+    "storage_bucket": "firebase-loggedoffapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1094417358494:android:24f3d036db397f55",
+        "android_client_info": {
+          "package_name": "com.fdv.loggedoff"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1094417358494-rudah2oflu8u3d9ujtpf7lmvdh9hbtdb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fdv.loggedoff",
+            "certificate_hash": "55BB474AA13B11696307A7D35220F3DFE3D6795B"
+          }
+        },
+        {
+          "client_id": "1094417358494-ga3rducksrntl6g2nlv6ojvf8ij7oip4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmow8qwartvSXXGW76F0og5TWmaLMupG8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
