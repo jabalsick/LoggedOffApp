@@ -63,4 +63,5 @@
     <string name="already_choose_title">Atención</string>
     <string name="already_choose_detail">Ya estás anotado para un turno.\nSi es mejor éste horario , desasignate del anterior primero.</string>
     <string name="cuenta_asociada">Cuenta asociada:</string>
+    <string name="title_activity_main22">MainActivity22</string>
 </resources>

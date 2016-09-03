@@ -4,26 +4,30 @@ package com.fdv.loggedoff.Fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.fdv.loggedoff.Activtys.BaseActivity;
+import com.fdv.loggedoff.Activtys.PrincipalActivity;
 import com.fdv.loggedoff.Model.Turno;
 import com.fdv.loggedoff.R;
 import com.fdv.loggedoff.Utils.NotificationUtils;
 import com.fdv.loggedoff.Views.CustomDialog;
-import com.fdv.loggedoff.Views.ItemDecorationAlbumColumns;
+import com.fdv.loggedoff.Views.TurnoFreeViewHolder;
 import com.fdv.loggedoff.Views.TurnoViewHolder;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.Query;
+import com.konifar.fab_transformation.FabTransformation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,12 +39,19 @@ public class TurnosFragment extends Fragment {
 
     private static final String EMPTY_STRING ="EMPTY" ;
     public static final String FREE_TURN_STRING = "LIBRE";
+    public static final String MAIL_OFICINAS = "oficinas";
     private View rootView;
     private Context mContext;
-    private RecyclerView turnosRecycler;
+    private RecyclerView turnosFreeRecycler;
+    private RecyclerView mainRecyclerView;
+    private FloatingActionButton fab;
+    private View overlay;
+    private CardView sheet;
     private DatabaseReference mDatabase;
-    private FirebaseRecyclerAdapter<Turno,TurnoViewHolder> mAdapter;
+    private FirebaseRecyclerAdapter<Turno,TurnoFreeViewHolder> mFreeAdapter;
+    private FirebaseRecyclerAdapter<Turno,TurnoViewHolder> mTurnAdapter;
     static boolean hasTurnSelected = false;
+
     public TurnosFragment() {
     }
 
@@ -52,126 +63,172 @@ public class TurnosFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_turnos, container, false);
         mContext = rootView.getContext();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        turnosRecycler = (RecyclerView)rootView.findViewById(R.id.my_turn_recycler_view);
-        turnosRecycler.setHasFixedSize(true);
-
+        turnosFreeRecycler = (RecyclerView)rootView.findViewById(R.id.my_turn_recycler_view);
+        mainRecyclerView = (RecyclerView)rootView.findViewById(R.id.main_recycler_view);
+        mainRecyclerView.setHasFixedSize(true);
+        turnosFreeRecycler.setHasFixedSize(true);
+        fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        overlay = rootView.findViewById(R.id.overlay);
+        sheet = (CardView) rootView.findViewById(R.id.sheet);
         return rootView;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupListeners();
+    }
+
+    private void setupListeners() {
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickFab();
+            }
+        });
+        overlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickOverlay();
+            }
+        });
+    }
+
+    public void onClickFab() {
+        if (fab.getVisibility() == View.VISIBLE) {
+            FabTransformation.with(fab).duration(200).setOverlay(overlay).transformTo(sheet);
+        }
+    }
+
+    public void onClickOverlay() {
+        if (fab.getVisibility() != View.VISIBLE) {
+            FabTransformation.with(fab).duration(200).setOverlay(overlay).transformFrom(sheet);
+        }
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setupFreeTurnList();
+        setupAssignedTurnList();
+    }
 
+    private void setupAssignedTurnList() {
+        Query query = mDatabase.child("horas").orderByChild("asigned").equalTo(true);
 
-        // Set up FirebaseRecyclerAdapter with the Query
-        //Query turnosQuery = getQuery(mDatabase);
-
-        mAdapter = new FirebaseRecyclerAdapter<Turno, TurnoViewHolder>(Turno.class, R.layout.turn_layout,
-                TurnoViewHolder.class, mDatabase.child("horas")) {
+        mTurnAdapter = new FirebaseRecyclerAdapter<Turno, TurnoViewHolder>(Turno.class, R.layout.turn_layout,
+                TurnoViewHolder.class, query) {
 
             @Override
-            protected void populateViewHolder(final TurnoViewHolder turnoViewHolder, final Turno turno, final int position) {
+            protected void populateViewHolder(final TurnoViewHolder viewHolder, Turno turno, int position) {
 
-                turnoViewHolder.linearCard.setTag(turno.getHora());
-                turnoViewHolder.personTurnView.setText(turno.getHora());
 
-                if(turno.getNombre().equals(FREE_TURN_STRING)){
-                    setupLayoutForFreeTurn(turnoViewHolder);
+                viewHolder.fullContainer.setTag(turno.getHora());
+                viewHolder.personTurnView.setText(turno.getHora());
+                viewHolder.personNameView.setText(turno.getNombre());
+
+
+                if(turno.getProfile_photo().equals(EMPTY_STRING)){
+                    Glide.with(TurnosFragment.this)
+                            .load(R.drawable.ic_face_black_24dp)
+                            .into(viewHolder.imageView);
                 }else{
-                    setupLayoutForOccupedTurn(turnoViewHolder, turno);
+                    Glide.with(TurnosFragment.this)
+                            .load(turno.getProfile_photo())
+                            .into(viewHolder.imageView);
                 }
+            /*BUTTON CANCELAR
 
-                 turnoViewHolder.btnCancelar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //  hideView(holder.linearCard);
-                        hasTurnSelected = false;
-                        freeTurn(turnoViewHolder.linearCard.getTag().toString(),turnoViewHolder.personNameView.getText().toString());
-                    }
-                });
+             viewHolder.btnCancelar.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       //  hideView(holder.linearCard);
+                       hasTurnSelected = false;
+                       freeTurn(viewHolder.fullContainer.getTag().toString(),viewHolder.personNameView.getText().toString());
+                   }
+               });*/
 
-                turnoViewHolder.btnAvisar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                /*        avisar(personNameView.getText().toString(), btnAvisar.getTag().toString(),
-                                personTurnView.getText().toString());*/
-                    }
-                });
+                viewHolder.btnAvisar.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+           /*       *//**//*     avisar(personNameView.getText().toString(), btnAvisar.getTag().toString(),
+                               personTurnView.getText().toString());*//**//**/
+                   }
+               });
+
             }
 
 
-
         };
-        turnosRecycler.setLayoutManager(new GridLayoutManager(mContext , 2));
-        turnosRecycler.addItemDecoration(new ItemDecorationAlbumColumns(
-                getResources().getDimensionPixelSize(R.dimen.turn_list_spacing),2));
-        turnosRecycler.setAdapter(mAdapter);
-        turnosRecycler.setItemAnimator(new MyDefaultItemAnimator());
 
+        mainRecyclerView.setLayoutManager(new LinearLayoutManager(mContext,LinearLayoutManager.VERTICAL,false));
+        mainRecyclerView.setAdapter(mTurnAdapter);
     }
 
-    private void setupLayoutForOccupedTurn(TurnoViewHolder turnoViewHolder, Turno turno) {
-        turnoViewHolder.itemView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+    private void setupFreeTurnList() {
+        Query query = mDatabase.child("horas").orderByChild("asigned").equalTo(false);
 
-        turnoViewHolder.imageView.setVisibility(View.VISIBLE);
-        turnoViewHolder.holderImageView.setVisibility(View.GONE);
-        turnoViewHolder.personTurnView.setTextColor(getResources().getColor(R.color.mb_white));
-        turnoViewHolder.personTurnView.setBackgroundColor(getResources().getColor(R.color.transparent_colorPrimaryDark));
-        turnoViewHolder.linearButtons.setBackgroundColor(getResources().getColor(R.color.transparent_colorPrimaryDark));
-        turnoViewHolder.personNameView.setText(turno.getNombre());
-        turnoViewHolder.personNameView.setTextColor(getResources().getColor(R.color.mb_white));
+        mFreeAdapter = new FirebaseRecyclerAdapter<Turno, TurnoFreeViewHolder>(Turno.class, R.layout.free_turn_layout,
+               TurnoFreeViewHolder.class, query) {
+
+           @Override
+           protected void populateViewHolder(final TurnoFreeViewHolder turnoFreeViewHolder, final Turno turno, final int position) {
+
+               turnoFreeViewHolder.fullContainer.setTag(turno.getHora());
+               turnoFreeViewHolder.personTurnView.setText(turno.getHora());
+               turnoFreeViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       if(!hasTurnSelected) {
+                           asignTurn(turnoFreeViewHolder.fullContainer.getTag().toString());
+                           onClickOverlay();
+                       }else{
+                           showAlertMessage();
+                       }
+                   }
+               });
+           }
+       };
+
+        turnosFreeRecycler.setLayoutManager(new LinearLayoutManager(mContext,LinearLayoutManager.VERTICAL,false));
+        turnosFreeRecycler.setAdapter(mFreeAdapter);
+    }
+
+  /*  private void setupLayoutForOccupedTurn(TurnoFreeViewHolder turnoFreeViewHolder, Turno turno) {
+        turnoFreeViewHolder.itemView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+        turnoFreeViewHolder.imageView.setVisibility(View.VISIBLE);
+        turnoFreeViewHolder.holderImageView.setVisibility(View.GONE);
+        turnoFreeViewHolder.personTurnView.setTextColor(getResources().getColor(R.color.mb_white));
+        turnoFreeViewHolder.personTurnView.setBackgroundColor(getResources().getColor(R.color.transparent_colorPrimaryDark));
+        turnoFreeViewHolder.linearButtons.setBackgroundColor(getResources().getColor(R.color.transparent_colorPrimaryDark));
+        turnoFreeViewHolder.personNameView.setText(turno.getNombre());
+        turnoFreeViewHolder.personNameView.setTextColor(getResources().getColor(R.color.mb_white));
 
         if (BaseActivity.getSignInAccount().getUid().equals(turno.getUid())) {
             hasTurnSelected = true;
-            turnoViewHolder.btnCancelar.setVisibility(View.VISIBLE);
-            turnoViewHolder. btnAvisar.setVisibility(View.GONE);
+            turnoFreeViewHolder.btnCancelar.setVisibility(View.VISIBLE);
+            turnoFreeViewHolder. btnAvisar.setVisibility(View.GONE);
 
         } else{
-            turnoViewHolder.btnAvisar.setTag(turno.getMail());
-            turnoViewHolder.btnAvisar.setVisibility(View.VISIBLE);
-            turnoViewHolder.btnCancelar.setVisibility(View.GONE);
+            turnoFreeViewHolder.btnAvisar.setTag(turno.getMail());
+            turnoFreeViewHolder.btnAvisar.setVisibility(View.VISIBLE);
+            turnoFreeViewHolder.btnCancelar.setVisibility(View.GONE);
         }
         //USUARIO LOGUEADO
 
         if(turno.getProfile_photo().equals(EMPTY_STRING)){
             Glide.with(TurnosFragment.this)
                     .load(R.drawable.chilling)
-                    .into(turnoViewHolder.imageView);
+                    .into(turnoFreeViewHolder.imageView);
         }else{
             Glide.with(TurnosFragment.this)
                     .load(turno.getProfile_photo())
-                    .into(turnoViewHolder.imageView);
+                    .into(turnoFreeViewHolder.imageView);
         }
-        turnoViewHolder.itemView.setOnClickListener(null);
+        turnoFreeViewHolder.itemView.setOnClickListener(null);
 
-    }
-
-    private void setupLayoutForFreeTurn(final TurnoViewHolder turnoViewHolder) {
-        turnoViewHolder.itemView.setBackgroundColor(getResources().getColor(R.color.mb_white));
-
-        turnoViewHolder.personNameView.setText(FREE_TURN_STRING);
-        turnoViewHolder.personNameView.setTextColor(getResources().getColor(R.color.colorPrimary));
-        turnoViewHolder.personTurnView.setTextColor(getResources().getColor(R.color.colorPrimary));
-        turnoViewHolder.personTurnView.setBackgroundColor(getResources().getColor(R.color.mb_white));
-
-        turnoViewHolder.linearButtons.setBackgroundColor(getResources().getColor(R.color.mb_white));
-
-        turnoViewHolder.holderImageView.setVisibility(View.VISIBLE);
-        turnoViewHolder.imageView.setVisibility(View.GONE);
-        turnoViewHolder.btnCancelar.setVisibility(View.GONE);
-        turnoViewHolder.btnAvisar.setVisibility(View.GONE);
-        turnoViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!hasTurnSelected) {
-                    asignTurn(turnoViewHolder.linearCard.getTag().toString());
-                }else{
-                    showAlertMessage();
-                }
-            }
-        });
-    }
+    }*/
 
 
     public void freeTurn(String horario, String who){
@@ -179,14 +236,14 @@ public class TurnosFragment extends Fragment {
 
         DatabaseReference hourRef =  mDatabase.child("horas").child(hora);
         Map<String, Object> nombre = new HashMap<String, Object>();
-        nombre.put("nombre", FREE_TURN_STRING);
+        nombre.put("nombre", EMPTY_STRING);
         nombre.put("profile_photo",EMPTY_STRING);
         nombre.put("mail",EMPTY_STRING);
         nombre.put("uid", EMPTY_STRING);
+        nombre.put("asigned",false);
         hourRef.updateChildren(nombre);
 
-
-        // super.sendMail(mUser.getEmail(),who + " dejó libre el turno de " + horario," ");
+        ((PrincipalActivity) getActivity()).sendMail("diego.blajackis@fdvsolutions.com",who + " dejó libre el turno de " + horario," ");
     }
     public void asignTurn(String horario){
         String hora = horario.replace(":", "");
@@ -196,9 +253,10 @@ public class TurnosFragment extends Fragment {
         nombre.put("profile_photo",BaseActivity.getSignInAccount().getPhotoUrl() != null ?BaseActivity.getSignInAccount().getPhotoUrl().toString():"EMPTY");
         nombre.put("mail",BaseActivity.getSignInAccount().getEmail());
         nombre.put("uid", BaseActivity.getSignInAccount().getUid());
+        nombre.put("asigned",true);
         hourRef.updateChildren(nombre);
 
-        NotificationUtils.scheduleNotification(NotificationUtils.getNotification("Recordatorio","En 5 minutos es tu turno de masajes"),30000);
+       // NotificationUtils.scheduleNotification(NotificationUtils.getNotification("Recordatorio","En 5 minutos es tu turno de masajes"),30000);
     }
 
 
@@ -218,12 +276,18 @@ public class TurnosFragment extends Fragment {
         public void onChangeFinished(RecyclerView.ViewHolder item, boolean oldItem) {
             super.onChangeFinished(item, oldItem);
             if(!oldItem){
-                if(((TurnoViewHolder) item).personNameView.getText().equals(FREE_TURN_STRING)){
+                if(((TurnoFreeViewHolder) item).personNameView.getText().equals(FREE_TURN_STRING)){
 
                     NotificationUtils.getInstance(getActivity()).sendPersonalizedNotification(
-                            "El turno de las " + ((TurnoViewHolder) item).personTurnView.getText() + " está libre",BaseActivity.getSignInAccount().getDisplayName().toString() + "!");
+                            "El turno de las " + ((TurnoFreeViewHolder) item).personTurnView.getText() + " está libre",BaseActivity.getSignInAccount().getDisplayName().toString() + "!");
                 }
             }
         }
     }
+
+
+
+/*   turnosFreeRecycler.addItemDecoration(new ItemDecorationAlbumColumns(
+     getResources().getDimensionPixelSize(R.dimen.turn_list_spacing),2));*/
+    /*    turnosFreeRecycler.setItemAnimator(new MyDefaultItemAnimator());*/
 }

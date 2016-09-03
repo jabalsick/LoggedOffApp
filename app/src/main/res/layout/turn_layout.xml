@@ -1,36 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="185dp"
-    android:layout_marginTop="2dp"
-    android:layout_marginLeft="2dp"
-    android:layout_marginRight ="2dp"
-    android:background="@color/colorPrimary"
-    android:layout_marginBottom="2dp"
-    android:orientation="horizontal">
-    <ImageView
-        android:id="@+id/person_photo"
+    android:layout_marginTop="4dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight ="8dp"
+    android:layout_marginBottom="4dp"
+    app:cardCornerRadius="4dp"
+    >
+<RelativeLayout
+    android:id="@+id/full_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--buttons-->
+    <View
+        android:id="@+id/linear_buttons"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible"
-        android:scaleType="centerInside"
-        android:layout_gravity="center"/>
-    <LinearLayout
-     android:id="@+id/linear_header"
-     android:orientation="vertical"
-     android:layout_width="match_parent"
-     android:layout_height="185dp"
-     android:weightSum="1">
-        <LinearLayout
-            android:id="@+id/turn_body"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="vertical"
-            android:layout_weight="0.8"
-            android:gravity="top">
+        android:layout_height="45dp"
+        android:layout_gravity="top"
+        android:orientation="horizontal"
+        android:background="@color/transparent_colorPrimaryDark"
+        android:gravity="center"/>
+
+
+    <com.fdv.loggedoff.Views.CustomTextView
+        app:typeface="Roboto_Medium"
+        android:id="@+id/person_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linear_buttons"
+        android:layout_marginLeft="80dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:textSize="22sp"
+        android:textColor="@color/mb_blue_dark"
+        android:text="Pablo Gotuzzo"/>
+
             <com.fdv.loggedoff.Views.CustomTextView
                 app:typeface="Roboto_Light"
                 android:id="@+id/person_turn"
@@ -38,73 +45,52 @@
                 android:padding="2dp"
                 android:layout_height="wrap_content"
                 android:textColor="@color/mb_white"
-                android:layout_gravity="top"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:gravity="top"
-                android:background="@color/transparent_colorPrimaryDark"
                 android:textSize="26sp"
                 android:text="11:00"
-                android:layout_marginTop="2dp" />
+              />
 
-        </LinearLayout>
-
-        <!--buttons-->
-        <LinearLayout
-            android:id="@+id/linear_buttons"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal"
-            android:layout_weight="0.2"
-            android:background="@color/transparent_colorPrimaryDark"
-            android:gravity="center"
-            android:visibility="visible">
-            <com.fdv.loggedoff.Views.CustomTextView
-                app:typeface="Roboto_Medium"
-                android:id="@+id/person_name"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:textSize="14sp"
-                android:layout_weight="3"
-                android:textColor="@color/mb_white"
-                android:text="Nombre"/>
-            <ImageButton
-                android:id="@+id/btnAvisar"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:padding="8dp"
-                android:layout_weight="1"
-                android:tint="@color/mb_white"
-                android:src="@drawable/ic_notifications_active_black"
-                android:scaleType="centerInside" />
-
-            <ImageButton
-                android:id="@+id/btnCancelar"
-                android:layout_width="0dp"
-                android:src="@drawable/ic_delete_black"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="8dp"
-                android:background="@android:color/transparent"
-                android:tint="@color/mb_white"
-                android:onClick="cancelTurn"
-                android:scaleType="centerInside"/>
-
-        </LinearLayout>
-    </LinearLayout>
 
     <ImageView
-        android:id="@+id/holder_free_turn"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/person_photo"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:visibility="visible"
-        android:scaleType="center"
-        android:padding="20dp"
-        android:src="@drawable/cloc_v2"
-        android:layout_gravity="center"/>
-</RelativeLayout>
+        android:layout_margin="10dp"
+        android:scaleType="centerInside"
+        android:layout_gravity="center"
+        android:src="@drawable/pablo"/>
+
+    <ImageButton
+        android:id="@+id/btnAvisar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:padding="8dp"
+        android:tint="@color/black_alpha_30"
+        android:src="@drawable/ic_notifications_active_black"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:scaleType="centerInside" />
+
+  <!--  <ImageButton
+        android:id="@+id/btnCancelar"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_delete_black"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:background="@android:color/transparent"
+        android:tint="@color/mb_white"
+        android:onClick="cancelTurn"
+        android:scaleType="centerInside"/>-->
+ </RelativeLayout>
+</android.support.v7.widget.CardView>
 
 
 

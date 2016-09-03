@@ -53,4 +53,6 @@
 
     <color name="extra_light_grey">#FBFBFB</color>
     <color name="light_grey">#E3E3E3</color>
+
+    <color name="black_alpha_30">#4D000000</color>
 </resources>

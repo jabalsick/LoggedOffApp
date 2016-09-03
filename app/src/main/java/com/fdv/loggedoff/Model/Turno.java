@@ -9,23 +9,25 @@ import java.util.Map;
  */
 
 @IgnoreExtraProperties
-public class    Turno {
+public class Turno {
   //  private int pos;
     private String nombre;
     private String hora;
     private String profile_photo;
     private String mail;
     private String uid;
+    private boolean asigned;
 
     public Turno(){
     }
 
-    public Turno(String hora, String nombre, String profile_photo,String mail,String uid){
+    public Turno(String hora, String nombre, String profile_photo,String mail,String uid,boolean assigned){
         this.nombre=nombre;
         this.hora=hora;
         this.profile_photo = profile_photo;
         this.mail=mail;
         this.uid=uid;
+        this.asigned= assigned;
     }
 
     public String getNombre() {
@@ -68,6 +70,14 @@ public class    Turno {
         this.uid = uid;
     }
 
+    public boolean isAssigned() {
+        return asigned;
+    }
+
+    public void setAssigned(boolean assigned) {
+        this.asigned = assigned;
+    }
+
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
@@ -75,6 +85,7 @@ public class    Turno {
         result.put("nombre", nombre);
         result.put("profile_photo", profile_photo);
         result.put("mail", mail);
+        result.put("asigned",asigned);
 
         return result;
     }

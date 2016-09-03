@@ -5,9 +5,9 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fdv.loggedoff.Model.Turno;
 import com.fdv.loggedoff.R;
 
 /**
@@ -18,34 +18,19 @@ public class TurnoViewHolder extends RecyclerView.ViewHolder{
 
     public TextView personNameView, personTurnView;
     public ImageView imageView;
-    public ImageView holderImageView;
-    public LinearLayout linearCard;
-    public LinearLayout linearButtons;
-    public LinearLayout turnBody;
     public ImageButton btnAvisar;
-    public ImageButton btnCancelar;
+    public RelativeLayout fullContainer;
+   // public ImageButton btnCancelar;
 
     public TurnoViewHolder(View itemView) {
         super(itemView);
-
+        fullContainer = (RelativeLayout) itemView.findViewById(R.id.full_container);
         personNameView = (TextView) itemView.findViewById(R.id.person_name);
         personTurnView = (TextView) itemView.findViewById(R.id.person_turn);
         imageView = (ImageView) itemView.findViewById(R.id.person_photo);
-        holderImageView = (ImageView) itemView.findViewById(R.id.holder_free_turn);
-        linearCard = (LinearLayout) itemView.findViewById(R.id.linear_header);
-        turnBody = (LinearLayout) itemView.findViewById(R.id.turn_body);
         btnAvisar = (ImageButton) itemView.findViewById(R.id.btnAvisar);
-        btnCancelar = (ImageButton) itemView.findViewById(R.id.btnCancelar);
-        linearButtons = (LinearLayout)itemView.findViewById(R.id.linear_buttons);
+      //  btnCancelar = (ImageButton) itemView.findViewById(R.id.btnCancelar);
 
     }
 
-  /*  public void bindToTurno(Turno post) {
-        titleView.setText(post.title);
-        authorView.setText(post.author);
-        numStarsView.setText(String.valueOf(post.starCount));
-        bodyView.setText(post.body);
-
-        starView.setOnClickListener(starClickListener);
-    }*/
 }
