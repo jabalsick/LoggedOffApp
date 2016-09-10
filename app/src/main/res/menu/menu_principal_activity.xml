@@ -2,12 +2,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <item
-        android:id="@+id/resetScheduler"
-        android:icon="@drawable/new_planilla"
-        app:showAsAction="ifRoom"
-        android:title="@string/reset">
-    </item>
-    <item
         android:id="@+id/logout"
         android:icon="@drawable/ic_exit_to_app"
         app:showAsAction="ifRoom"

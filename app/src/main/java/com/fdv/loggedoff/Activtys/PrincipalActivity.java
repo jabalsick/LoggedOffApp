@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.fdv.loggedoff.Adapters.PagerAdapter;
 import com.fdv.loggedoff.Model.Turno;
 import com.fdv.loggedoff.R;
+import com.fdv.loggedoff.Utils.DateUtils;
 import com.fdv.loggedoff.Views.CustomTextView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -28,6 +29,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,6 +83,32 @@ public class PrincipalActivity  extends BaseActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        checkScheduler();
+
+    }
+
+    private void checkScheduler() {
+        final String day = DateUtils.formatDate(new Date(),DateUtils.DAYMONTHYEAR);
+
+        mSchedulerFirebase.child(day).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // handle the case where the data already exists
+                    Toast.makeText(PrincipalActivity.this,"YA EXISTE",Toast.LENGTH_LONG).show(); //do other stuff;
+                }
+                else {
+                    // handle the case where the data does not yet exist
+                    resetScheduler(day);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
@@ -152,7 +180,7 @@ public class PrincipalActivity  extends BaseActivity {
 
     }
 
-    public void resetScheduler(){
+    public void resetScheduler(final String day){
         mSchedulerFirebase.child("horas").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -160,14 +188,15 @@ public class PrincipalActivity  extends BaseActivity {
                 for (DataSnapshot turnSnapshot: snapshot.getChildren()) {
                        Turno mTurno = turnSnapshot.getValue(Turno.class);
                        String hora = mTurno.getHora().replace(":", "");
-                    DatabaseReference hourRef = mSchedulerFirebase.child("horas").child(hora);
+                    DatabaseReference hourRef = mSchedulerFirebase.child(day).child(hora);
                     Map<String, Object> nombre = new HashMap<String, Object>();
                     nombre.put("hora",mTurno.getHora());
+                    nombre.put("asigned",false);
                     nombre.put("nombre", "LIBRE");
                     nombre.put("profile_photo", "EMPTY");
                     nombre.put("mail","EMPTY");
                     nombre.put("uid", "EMPTY");
-                    hourRef.updateChildren(nombre);
+                    hourRef.setValue(nombre);
                 }
             }
 
@@ -179,19 +208,12 @@ public class PrincipalActivity  extends BaseActivity {
         });
     }
 
-    public DatabaseReference getSchedulerFirebase(){
-        return mSchedulerFirebase.child("horas");
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
                 signOut();
-                return true;
-
-            case R.id.resetScheduler:
-                 resetScheduler();
                 return true;
 
             default:

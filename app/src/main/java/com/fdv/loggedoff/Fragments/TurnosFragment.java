@@ -10,25 +10,32 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.fdv.loggedoff.Activtys.BaseActivity;
 import com.fdv.loggedoff.Activtys.PrincipalActivity;
 import com.fdv.loggedoff.Model.Turno;
 import com.fdv.loggedoff.R;
+import com.fdv.loggedoff.Utils.DateUtils;
 import com.fdv.loggedoff.Utils.NotificationUtils;
 import com.fdv.loggedoff.Views.CustomDialog;
 import com.fdv.loggedoff.Views.TurnoFreeViewHolder;
 import com.fdv.loggedoff.Views.TurnoViewHolder;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.konifar.fab_transformation.FabTransformation;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,11 +47,13 @@ public class TurnosFragment extends Fragment {
     private static final String EMPTY_STRING ="EMPTY" ;
     public static final String FREE_TURN_STRING = "LIBRE";
     public static final String MAIL_OFICINAS = "oficinas";
+    private String dateNode;
     private View rootView;
     private Context mContext;
     private RecyclerView turnosFreeRecycler;
     private RecyclerView mainRecyclerView;
     private FloatingActionButton fab;
+//    private LinearLayout allFreeMessage;
     private View overlay;
     private CardView sheet;
     private DatabaseReference mDatabase;
@@ -70,6 +79,7 @@ public class TurnosFragment extends Fragment {
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         overlay = rootView.findViewById(R.id.overlay);
         sheet = (CardView) rootView.findViewById(R.id.sheet);
+//        allFreeMessage = (LinearLayout) rootView.findViewById(R.id.all_free);
         return rootView;
     }
 
@@ -95,9 +105,9 @@ public class TurnosFragment extends Fragment {
     }
 
     public void onClickFab() {
-        if (fab.getVisibility() == View.VISIBLE) {
-            FabTransformation.with(fab).duration(200).setOverlay(overlay).transformTo(sheet);
-        }
+
+        canSelectTurn();
+
     }
 
     public void onClickOverlay() {
@@ -114,7 +124,8 @@ public class TurnosFragment extends Fragment {
     }
 
     private void setupAssignedTurnList() {
-        Query query = mDatabase.child("horas").orderByChild("asigned").equalTo(true);
+        dateNode = DateUtils.formatDate(new Date(),DateUtils.DAYMONTHYEAR);
+        Query query = mDatabase.child(dateNode).orderByChild("asigned").equalTo(true);
 
         mTurnAdapter = new FirebaseRecyclerAdapter<Turno, TurnoViewHolder>(Turno.class, R.layout.turn_layout,
                 TurnoViewHolder.class, query) {
@@ -166,7 +177,8 @@ public class TurnosFragment extends Fragment {
     }
 
     private void setupFreeTurnList() {
-        Query query = mDatabase.child("horas").orderByChild("asigned").equalTo(false);
+        dateNode = DateUtils.formatDate(new Date(),DateUtils.DAYMONTHYEAR);
+        Query query = mDatabase.child(dateNode).orderByChild("asigned").equalTo(false);
 
         mFreeAdapter = new FirebaseRecyclerAdapter<Turno, TurnoFreeViewHolder>(Turno.class, R.layout.free_turn_layout,
                TurnoFreeViewHolder.class, query) {
@@ -233,8 +245,8 @@ public class TurnosFragment extends Fragment {
 
     public void freeTurn(String horario, String who){
         String hora = horario.replace(":","");
-
-        DatabaseReference hourRef =  mDatabase.child("horas").child(hora);
+        dateNode = DateUtils.formatDate(new Date(),DateUtils.DAYMONTHYEAR);
+        DatabaseReference hourRef =  mDatabase.child(dateNode).child(hora);
         Map<String, Object> nombre = new HashMap<String, Object>();
         nombre.put("nombre", EMPTY_STRING);
         nombre.put("profile_photo",EMPTY_STRING);
@@ -247,7 +259,8 @@ public class TurnosFragment extends Fragment {
     }
     public void asignTurn(String horario){
         String hora = horario.replace(":", "");
-        DatabaseReference hourRef = mDatabase.child("horas").child(hora);
+        dateNode = DateUtils.formatDate(new Date(),DateUtils.DAYMONTHYEAR);
+        DatabaseReference hourRef = mDatabase.child(dateNode).child(hora);
         Map<String, Object> nombre = new HashMap<String, Object>();
         nombre.put("nombre", BaseActivity.getSignInAccount().getDisplayName());
         nombre.put("profile_photo",BaseActivity.getSignInAccount().getPhotoUrl() != null ?BaseActivity.getSignInAccount().getPhotoUrl().toString():"EMPTY");
@@ -286,6 +299,31 @@ public class TurnosFragment extends Fragment {
     }
 
 
+
+    public void canSelectTurn(){
+       String userId = BaseActivity.getSignInAccount().getUid();
+        final String day = DateUtils.formatDate(new Date(),DateUtils.DAYMONTHYEAR);
+        mDatabase.child(day).orderByChild("uid").equalTo(userId).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()){
+                        hasTurnSelected = true;
+                         showAlertMessage();
+                        }else{
+                        hasTurnSelected = false;
+                            if (fab.getVisibility() == View.VISIBLE) {
+                                FabTransformation.with(fab).duration(200).setOverlay(overlay).transformTo(sheet);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
 
 /*   turnosFreeRecycler.addItemDecoration(new ItemDecorationAlbumColumns(
      getResources().getDimensionPixelSize(R.dimen.turn_list_spacing),2));*/
