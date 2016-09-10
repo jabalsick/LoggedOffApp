@@ -6,11 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.fdv.loggedoff.Adapters.PagerAdapter;
 import com.fdv.loggedoff.Model.Turno;
@@ -19,7 +17,6 @@ import com.fdv.loggedoff.Utils.DateUtils;
 import com.fdv.loggedoff.Views.CustomTextView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -28,7 +25,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -97,13 +93,8 @@ public class PrincipalActivity  extends BaseActivity {
         mSchedulerFirebase.child(day).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    // handle the case where the data already exists
-                    Toast.makeText(PrincipalActivity.this,"YA EXISTE",Toast.LENGTH_LONG).show(); //do other stuff;
-                }
-                else {
-                    // handle the case where the data does not yet exist
-                    resetScheduler(day);
+                if (!snapshot.exists()) {
+                    createScheduler(day);
                 }
             }
 
@@ -180,7 +171,7 @@ public class PrincipalActivity  extends BaseActivity {
 
     }
 
-    public void resetScheduler(final String day){
+    public void createScheduler(final String day){
         mSchedulerFirebase.child("horas").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
