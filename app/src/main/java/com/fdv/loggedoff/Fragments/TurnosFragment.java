@@ -21,6 +21,7 @@ import com.fdv.loggedoff.Activtys.BaseActivity;
 import com.fdv.loggedoff.Activtys.PrincipalActivity;
 import com.fdv.loggedoff.Model.Turno;
 import com.fdv.loggedoff.R;
+import com.fdv.loggedoff.Utils.CropCircleTransformation;
 import com.fdv.loggedoff.Utils.DateUtils;
 import com.fdv.loggedoff.Utils.NotificationUtils;
 import com.fdv.loggedoff.Views.CustomDialog;
@@ -105,7 +106,6 @@ public class TurnosFragment extends Fragment {
     }
 
     public void onClickFab() {
-
         canSelectTurn();
 
     }
@@ -146,6 +146,7 @@ public class TurnosFragment extends Fragment {
                 }else{
                     Glide.with(TurnosFragment.this)
                             .load(turno.getProfile_photo())
+                            .bitmapTransform(new CropCircleTransformation(viewHolder.imageView.getContext()))
                             .into(viewHolder.imageView);
                 }
             /*BUTTON CANCELAR

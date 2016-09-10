@@ -171,7 +171,6 @@ public class LoginActivity extends BaseActivity implements
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
                         setFirebaseUserSignIn(mAuth.getCurrentUser());
-                    //    goToScheduler();
 
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
