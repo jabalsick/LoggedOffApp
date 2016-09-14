@@ -99,7 +99,7 @@ public class LoginActivity extends BaseActivity implements
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     if(BaseActivity.signInAccount == null){
-                        setFirebaseUserSignIn(  user);
+                        setFirebaseUserSignIn(user);
                         goToScheduler();
                     }
                 } else {

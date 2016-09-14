@@ -131,17 +131,14 @@ public class TurnosFragment extends Fragment {
                 TurnoViewHolder.class, query) {
 
             @Override
-            protected void populateViewHolder(final TurnoViewHolder viewHolder, Turno turno, int position) {
-
-
+            protected void populateViewHolder(final TurnoViewHolder viewHolder, final Turno turno, int position) {
                 viewHolder.fullContainer.setTag(turno.getHora());
                 viewHolder.personTurnView.setText(turno.getHora());
                 viewHolder.personNameView.setText(turno.getNombre());
 
-
                 if(turno.getProfile_photo().equals(EMPTY_STRING)){
                     Glide.with(TurnosFragment.this)
-                            .load(R.drawable.ic_face_black_24dp)
+                            .load(R.drawable.no_photo)
                             .into(viewHolder.imageView);
                 }else{
                     Glide.with(TurnosFragment.this)
@@ -149,28 +146,33 @@ public class TurnosFragment extends Fragment {
                             .bitmapTransform(new CropCircleTransformation(viewHolder.imageView.getContext()))
                             .into(viewHolder.imageView);
                 }
-            /*BUTTON CANCELAR
+                if (turno.getUid().equals(BaseActivity.getSignInAccount().getUid())) {
+                    hasTurnSelected = true;
+                    viewHolder.btnCancelar.setVisibility(View.VISIBLE);
+                    viewHolder. btnAvisar.setVisibility(View.GONE);
 
+                } else{
+                    viewHolder.btnAvisar.setTag(turno.getMail());
+                    viewHolder.btnAvisar.setVisibility(View.VISIBLE);
+                    viewHolder.btnCancelar.setVisibility(View.GONE);
+                }
+            //BUTTON CANCELAR
              viewHolder.btnCancelar.setOnClickListener(new View.OnClickListener() {
                    @Override
                    public void onClick(View v) {
-                       //  hideView(holder.linearCard);
-                       hasTurnSelected = false;
                        freeTurn(viewHolder.fullContainer.getTag().toString(),viewHolder.personNameView.getText().toString());
-                   }
-               });*/
-
-                viewHolder.btnAvisar.setOnClickListener(new View.OnClickListener() {
-                   @Override
-                   public void onClick(View v) {
-           /*       *//**//*     avisar(personNameView.getText().toString(), btnAvisar.getTag().toString(),
-                               personTurnView.getText().toString());*//**//**/
                    }
                });
 
+                //BUTTON AVISAR
+             viewHolder.btnAvisar.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                    avisar(viewHolder.personNameView.toString(),turno.getMail(),
+                            viewHolder.personTurnView.getText().toString());
+                   }
+               });
             }
-
-
         };
 
         mainRecyclerView.setLayoutManager(new LinearLayoutManager(mContext,LinearLayoutManager.VERTICAL,false));
@@ -207,43 +209,6 @@ public class TurnosFragment extends Fragment {
         turnosFreeRecycler.setAdapter(mFreeAdapter);
     }
 
-  /*  private void setupLayoutForOccupedTurn(TurnoFreeViewHolder turnoFreeViewHolder, Turno turno) {
-        turnoFreeViewHolder.itemView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-
-        turnoFreeViewHolder.imageView.setVisibility(View.VISIBLE);
-        turnoFreeViewHolder.holderImageView.setVisibility(View.GONE);
-        turnoFreeViewHolder.personTurnView.setTextColor(getResources().getColor(R.color.mb_white));
-        turnoFreeViewHolder.personTurnView.setBackgroundColor(getResources().getColor(R.color.transparent_colorPrimaryDark));
-        turnoFreeViewHolder.linearButtons.setBackgroundColor(getResources().getColor(R.color.transparent_colorPrimaryDark));
-        turnoFreeViewHolder.personNameView.setText(turno.getNombre());
-        turnoFreeViewHolder.personNameView.setTextColor(getResources().getColor(R.color.mb_white));
-
-        if (BaseActivity.getSignInAccount().getUid().equals(turno.getUid())) {
-            hasTurnSelected = true;
-            turnoFreeViewHolder.btnCancelar.setVisibility(View.VISIBLE);
-            turnoFreeViewHolder. btnAvisar.setVisibility(View.GONE);
-
-        } else{
-            turnoFreeViewHolder.btnAvisar.setTag(turno.getMail());
-            turnoFreeViewHolder.btnAvisar.setVisibility(View.VISIBLE);
-            turnoFreeViewHolder.btnCancelar.setVisibility(View.GONE);
-        }
-        //USUARIO LOGUEADO
-
-        if(turno.getProfile_photo().equals(EMPTY_STRING)){
-            Glide.with(TurnosFragment.this)
-                    .load(R.drawable.chilling)
-                    .into(turnoFreeViewHolder.imageView);
-        }else{
-            Glide.with(TurnosFragment.this)
-                    .load(turno.getProfile_photo())
-                    .into(turnoFreeViewHolder.imageView);
-        }
-        turnoFreeViewHolder.itemView.setOnClickListener(null);
-
-    }*/
-
-
     public void freeTurn(String horario, String who){
         String hora = horario.replace(":","");
         dateNode = DateUtils.formatDate(new Date(),DateUtils.DAYMONTHYEAR);
@@ -272,7 +237,11 @@ public class TurnosFragment extends Fragment {
 
        // NotificationUtils.scheduleNotification(NotificationUtils.getNotification("Recordatorio","En 5 minutos es tu turno de masajes"),30000);
     }
-
+    public void avisar(String aQuienLlama,String email,String hora){
+        ((PrincipalActivity) getActivity()).sendMail(email, aQuienLlama + " : " + ((PrincipalActivity) getActivity()).getmUser().getName()
+                + " te recuerda que a las "
+                + hora + " es tu turno.", "");
+    }
 
 
     public void showAlertMessage(){
@@ -318,15 +287,10 @@ public class TurnosFragment extends Fragment {
                             }
                         }
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
                     }
                 });
     }
-
-/*   turnosFreeRecycler.addItemDecoration(new ItemDecorationAlbumColumns(
-     getResources().getDimensionPixelSize(R.dimen.turn_list_spacing),2));*/
-    /*    turnosFreeRecycler.setItemAnimator(new MyDefaultItemAnimator());*/
 }

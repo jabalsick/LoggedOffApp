@@ -1,0 +1,39 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center_horizontal"
+    tools:context="com.fdv.loggedoff.Activtys.PrincipalActivity">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:gravity="bottom"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/popup_profile_upload_a_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/gallery"
+            android:textSize="18sp" />
+
+        <ImageButton
+            android:id="@+id/popup_profile_take_a_picture"
+            android:layout_width="match_parent"
+            android:textColor="@color/mb_white"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_a_photo_black"
+            android:textSize="18sp" />
+
+        <ImageButton
+            android:id="@+id/popup_profile_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_cancel_black_48dp"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+</RelativeLayout>

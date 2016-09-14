@@ -20,7 +20,7 @@ public class TurnoViewHolder extends RecyclerView.ViewHolder{
     public ImageView imageView;
     public ImageButton btnAvisar;
     public RelativeLayout fullContainer;
-   // public ImageButton btnCancelar;
+    public ImageButton btnCancelar;
 
     public TurnoViewHolder(View itemView) {
         super(itemView);
@@ -29,7 +29,7 @@ public class TurnoViewHolder extends RecyclerView.ViewHolder{
         personTurnView = (TextView) itemView.findViewById(R.id.person_turn);
         imageView = (ImageView) itemView.findViewById(R.id.person_photo);
         btnAvisar = (ImageButton) itemView.findViewById(R.id.btnAvisar);
-      //  btnCancelar = (ImageButton) itemView.findViewById(R.id.btnCancelar);
+        btnCancelar = (ImageButton) itemView.findViewById(R.id.btnCancelar);
 
     }
 

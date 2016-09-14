@@ -8,7 +8,7 @@ public class DateUtils {
 
         public static final String HOUR_MINS_HS = "HH:mm'hs'";
         public static final String HOUR_MINS = "HH:mm";
-        public static final String DAYMONTHYEAR = "ddMMMyy";
+        public static final String DAYMONTHYEAR = "ddMMyy";
 
         public static String formatDate(Date date, String format) {
             SimpleDateFormat dateFormat = new SimpleDateFormat(format);

@@ -2,6 +2,7 @@ package com.fdv.loggedoff.Activtys;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -19,9 +20,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -48,6 +52,11 @@ public abstract class BaseActivity extends AppCompatActivity
     public static String DEFAULT_PHOTO ="DEFAULT";
     public static DatabaseReference userRef  = FirebaseDatabase.getInstance().getReference().child("users");
     public static DatabaseReference mSchedulerFirebase  = FirebaseDatabase.getInstance().getReference();
+
+    // File Storage reference
+    public static  FirebaseStorage storage = FirebaseStorage.getInstance();
+    public static StorageReference storageRef = storage.getReferenceFromUrl("gs://firebase-loggedoffapp.appspot.com");
+
 
     public static Person getmUser() {
         return mUser;
@@ -85,9 +94,28 @@ public abstract class BaseActivity extends AppCompatActivity
 
     public static void setFirebaseUserSignIn(FirebaseUser signInAccount) {
         BaseActivity.signInAccount = signInAccount;
+        registerUserOnDatabase();
     }
 
-//EMAIL IMPLEMENTATION
+    public static void registerUserOnDatabase() {
+        Map<String, Object> nombre = new HashMap<String, Object>();
+        nombre.put("uid",signInAccount.getUid());
+        nombre.put("nombre", signInAccount.getDisplayName());
+        nombre.put("profile_photo",signInAccount.getPhotoUrl());
+        userRef.child(signInAccount.getUid()).setValue(nombre);
+
+    }
+
+    public static void updateUserPhotoOnDatabase(Uri uri){
+        Map<String, Object> nombre = new HashMap<String, Object>();
+        nombre.put("uid",signInAccount.getUid());
+        nombre.put("nombre", signInAccount.getDisplayName());
+        nombre.put("profile_photo",uri);
+        userRef.child(signInAccount.getUid()).setValue(nombre);
+    }
+
+
+    //EMAIL IMPLEMENTATION
     public void sendMail(String email, String subject, String messageBody) {
         Session session = createSessionObject();
 
