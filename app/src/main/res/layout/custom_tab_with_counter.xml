@@ -25,11 +25,10 @@
         android:layout_height="wrap_content"
         android:textColor="@color/mb_white"
         android:background="@android:drawable/ic_notification_overlay"
-        android:backgroundTint="@color/colorAccent"
-        android:layout_marginLeft="25dp"
+        android:layout_marginLeft="4dp"
         android:layout_marginTop="3dp"
         android:paddingTop="2dp"
         android:paddingBottom="2dp"
-        android:textSize="12sp"
+        android:textSize="10sp"
         android:gravity="center"/>
 </LinearLayout>
