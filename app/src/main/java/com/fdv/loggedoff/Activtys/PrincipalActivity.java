@@ -5,10 +5,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.fdv.loggedoff.Adapters.PagerAdapter;
 import com.fdv.loggedoff.Model.Turno;
@@ -23,6 +28,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Date;
@@ -52,6 +58,7 @@ public class PrincipalActivity  extends BaseActivity {
         tabLayout.addTab(tabLayout.newTab());
         tabLayout.addTab(tabLayout.newTab());
         setupTabIcons();
+        setupTabTurnCounter();
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
@@ -70,10 +77,6 @@ public class PrincipalActivity  extends BaseActivity {
             public void onTabUnselected(TabLayout.Tab tab) {
                  setupUnSelectedTab(tab);
                 viewPager.setCurrentItem(tab.getPosition());
-                if (((CustomTextView) tab.getCustomView()).getText().
-                        equals(getResources().getString(R.string.profile))) {
-                   // updateUser();
-                }
 
             }
 
@@ -85,6 +88,28 @@ public class PrincipalActivity  extends BaseActivity {
 
         checkScheduler();
 
+    }
+
+    private void setupTabTurnCounter() {
+        String dateNode = DateUtils.formatDate(new Date(),DateUtils.DAYMONTHYEAR);
+       Query freeTurnQuery = mSchedulerFirebase.child(dateNode).orderByChild("asigned").equalTo(false);
+        ValueEventListener freeTurnChangetListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ((TextView)tabLayout.getTabAt(0).getCustomView().findViewById(R.id.counter_tab)).setText(""+dataSnapshot.getChildrenCount());
+                if( dataSnapshot.getChildrenCount() > 0) {
+                    ((TextView)tabLayout.getTabAt(0).getCustomView().findViewById(R.id.counter_tab)).setVisibility(View.VISIBLE);
+                }else{
+                    ((TextView)tabLayout.getTabAt(0).getCustomView().findViewById(R.id.counter_tab)).setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        freeTurnQuery.addValueEventListener(freeTurnChangetListener);
     }
 
     private void checkScheduler() {
@@ -124,31 +149,33 @@ public class PrincipalActivity  extends BaseActivity {
 
 
     public void setupSelectedTab(TabLayout.Tab tab){
-        ((CustomTextView)tab.getCustomView()).
+
+
+        ((TextView)tab.getCustomView().findViewById(R.id.text_tab)).
                 setTextColor(getResources().getColor(R.color.colorAccent));
-        if(((CustomTextView)tab.getCustomView()).getText()
+        if(((TextView)tab.getCustomView().findViewById(R.id.text_tab)).getText()
                 .equals(getResources().getString(R.string.turnos))){
-            ((CustomTextView)tab.getCustomView())
+            (((TextView)tab.getCustomView().findViewById(R.id.text_tab)))
                     .setCompoundDrawablesWithIntrinsicBounds(R.drawable.turnos_selected_icon, 0, 0, 0);
 
 
         }else{
-            ((CustomTextView)tab.getCustomView())
+            (((TextView)tab.getCustomView().findViewById(R.id.text_tab)))
                     .setCompoundDrawablesWithIntrinsicBounds(R.drawable.profile_selected_icon, 0, 0, 0);
         }
 
     }
 
     public void setupUnSelectedTab(TabLayout.Tab tab){
-        ((CustomTextView)tab.getCustomView()).
+        ((TextView)tab.getCustomView().findViewById(R.id.text_tab)).
                 setTextColor(getResources().getColor(R.color.mb_white));
 
-        if(((CustomTextView)tab.getCustomView()).getText()
+        if(((TextView)tab.getCustomView().findViewById(R.id.text_tab)).getText()
                 .equals(getResources().getString(R.string.turnos))){
-            ((CustomTextView)tab.getCustomView())
+            (((TextView)tab.getCustomView().findViewById(R.id.text_tab)))
                     .setCompoundDrawablesWithIntrinsicBounds(R.drawable.turnos_seated_icon_24, 0, 0, 0);
         }else{
-            ((CustomTextView)tab.getCustomView())
+            (((TextView)tab.getCustomView().findViewById(R.id.text_tab)))
                     .setCompoundDrawablesWithIntrinsicBounds(R.drawable.profile_icon_24, 0, 0, 0);
         }
 
@@ -157,19 +184,20 @@ public class PrincipalActivity  extends BaseActivity {
 
     private void setupTabIcons() {
 
-        CustomTextView tab1 = (CustomTextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tab1.setText(R.string.turnos);
-        tab1.setTextColor(getResources().getColor(R.color.colorAccent));
-        tab1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.turnos_selected_icon, 0, 0, 0);
+        LinearLayout tab1 = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab_with_counter, null);
+        ((TextView)tab1.findViewById(R.id.text_tab)).setText(R.string.turnos);
+        ((TextView)tab1.findViewById(R.id.text_tab)).setTextColor(getResources().getColor(R.color.colorAccent));
+        ((TextView)tab1.findViewById(R.id.text_tab)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.turnos_selected_icon, 0, 0, 0);
         tabLayout.getTabAt(0).setCustomView(tab1);
 
-        CustomTextView tab2 = (CustomTextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tab2.setText(R.string.profile);
-        tab2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.profile_icon_24, 0, 0, 0);
+        LinearLayout tab2 = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+        ((TextView)tab2.findViewById(R.id.text_tab)).setText(R.string.profile);
+        ((TextView)tab2.findViewById(R.id.text_tab)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.profile_icon_24, 0, 0, 0);
         tabLayout.getTabAt(1).setCustomView(tab2);
 
-
     }
+
+
 
     public void createScheduler(final String day){
         mSchedulerFirebase.child("horas").addListenerForSingleValueEvent(new ValueEventListener() {

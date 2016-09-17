@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:typeface="Roboto_Light"
+    android:id="@+id/tab"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal">
+    <com.fdv.loggedoff.Views.CustomTextView
+    app:typeface="Roboto_Medium"
+        android:id="@+id/text_tab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/mb_white"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="4dp"
+        android:textSize="16sp"
+        android:gravity="center"/>
+    <com.fdv.loggedoff.Views.CustomTextView
+        app:typeface="Roboto_Black"
+        android:id="@+id/counter_tab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/mb_white"
+        android:background="@android:drawable/ic_notification_overlay"
+        android:backgroundTint="@color/colorAccent"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="3dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:textSize="12sp"
+        android:gravity="center"/>
+</LinearLayout>

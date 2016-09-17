@@ -78,23 +78,29 @@
 
     </io.codetail.widget.RevealFrameLayout>
 
-  <!--  <LinearLayout
+   <LinearLayout
         android:id="@+id/all_free"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+       android:layout_alignParentTop="true"
         android:gravity="center"
+       android:layout_marginTop="100dp"
         android:orientation="vertical">
         <com.fdv.loggedoff.Views.CustomTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:gravity="center"
-            android:text="Todos los turnos están disponibles"/>
+            android:textSize="18sp"
+            app:typeface="Roboto_Bold"
+            android:text="@string/todos_disponibles"/>
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:scaleType="fitXY"
             android:tint="@color/accent"
+            android:layout_marginTop="10dp"
             android:src="@drawable/profile_selected_icon"/>
     </LinearLayout>
--->
+
 </RelativeLayout>

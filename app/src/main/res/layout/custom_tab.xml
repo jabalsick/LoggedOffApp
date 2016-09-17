@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.fdv.loggedoff.Views.CustomTextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:typeface="Roboto_Light"
     android:id="@+id/tab"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textColor="@color/mb_white"
-    android:gravity="center"/>
+    android:gravity="center"
+    android:orientation="horizontal">
+    <com.fdv.loggedoff.Views.CustomTextView
+        app:typeface="Roboto_Medium"
+        android:id="@+id/text_tab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/mb_white"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="4dp"
+        android:textSize="16sp"
+        android:layout_marginBottom="4dp"
+        android:gravity="center"/>
+</LinearLayout>

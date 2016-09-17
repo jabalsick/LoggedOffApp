@@ -10,7 +10,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,14 +53,14 @@ public class TurnosFragment extends Fragment {
     private RecyclerView turnosFreeRecycler;
     private RecyclerView mainRecyclerView;
     private FloatingActionButton fab;
-//    private LinearLayout allFreeMessage;
+    private LinearLayout allFreeMessage;
     private View overlay;
     private CardView sheet;
     private DatabaseReference mDatabase;
     private FirebaseRecyclerAdapter<Turno,TurnoFreeViewHolder> mFreeAdapter;
     private FirebaseRecyclerAdapter<Turno,TurnoViewHolder> mTurnAdapter;
     static boolean hasTurnSelected = false;
-
+   static Query freeQuery;
     public TurnosFragment() {
     }
 
@@ -80,7 +79,8 @@ public class TurnosFragment extends Fragment {
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         overlay = rootView.findViewById(R.id.overlay);
         sheet = (CardView) rootView.findViewById(R.id.sheet);
-//        allFreeMessage = (LinearLayout) rootView.findViewById(R.id.all_free);
+        allFreeMessage = (LinearLayout) rootView.findViewById(R.id.all_free);
+
         return rootView;
     }
 
@@ -175,16 +175,35 @@ public class TurnosFragment extends Fragment {
             }
         };
 
+
+        ValueEventListener turnChangetListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if( dataSnapshot.getChildrenCount() > 0) {
+                  allFreeMessage.setVisibility(View.GONE);
+                }else{
+                  allFreeMessage.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        query.addValueEventListener(turnChangetListener);
+
         mainRecyclerView.setLayoutManager(new LinearLayoutManager(mContext,LinearLayoutManager.VERTICAL,false));
         mainRecyclerView.setAdapter(mTurnAdapter);
+
     }
 
     private void setupFreeTurnList() {
         dateNode = DateUtils.formatDate(new Date(),DateUtils.DAYMONTHYEAR);
-        Query query = mDatabase.child(dateNode).orderByChild("asigned").equalTo(false);
+        freeQuery = mDatabase.child(dateNode).orderByChild("asigned").equalTo(false);
 
         mFreeAdapter = new FirebaseRecyclerAdapter<Turno, TurnoFreeViewHolder>(Turno.class, R.layout.free_turn_layout,
-               TurnoFreeViewHolder.class, query) {
+               TurnoFreeViewHolder.class, freeQuery) {
 
            @Override
            protected void populateViewHolder(final TurnoFreeViewHolder turnoFreeViewHolder, final Turno turno, final int position) {
@@ -204,6 +223,23 @@ public class TurnosFragment extends Fragment {
                });
            }
        };
+
+        ValueEventListener freeTurnChangetListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if( dataSnapshot.getChildrenCount() > 0) {
+                    fab.setVisibility(View.VISIBLE);
+                }else{
+                    fab.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        freeQuery.addValueEventListener(freeTurnChangetListener);
 
         turnosFreeRecycler.setLayoutManager(new LinearLayoutManager(mContext,LinearLayoutManager.VERTICAL,false));
         turnosFreeRecycler.setAdapter(mFreeAdapter);
