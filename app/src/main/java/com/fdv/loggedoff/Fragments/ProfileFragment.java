@@ -42,6 +42,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.fdv.loggedoff.Activtys.BaseActivity;
 import com.fdv.loggedoff.R;
 import com.fdv.loggedoff.Utils.CropCircleTransformation;
@@ -98,12 +99,10 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
 
     private void initUI(){
         profilePicture =(ImageView) rootView.findViewById(R.id.profile_picture);
-        name = (AutoCompleteTextView) rootView.findViewById(R.id.name);
+     //   name = (AutoCompleteTextView) rootView.findViewById(R.id.name);
         imageProgressBar = (ProgressBar) rootView.findViewById(R.id.picture_loader);
-        //notif_switch = (Switch) rootView.findViewById(R.id.switch_notification);
-          btnNewPhoto =(ImageButton) rootView.findViewById(R.id.btnNewPhoto);
-   //     btnRemovePhoto =(ImageButton) rootView.findViewById(R.id.btnRemove);
-        profileName =  (CustomTextView) rootView.findViewById(R.id.profile_user_name);
+        btnNewPhoto =(ImageButton) rootView.findViewById(R.id.btnNewPhoto);
+        profileName =  (CustomTextView) rootView.findViewById(R.id.person_name);
         btnSave = (Button) rootView.findViewById(R.id.save);
 
         setupButtonListeners();
@@ -113,12 +112,12 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
 
     private void initProfileSettings() {
 
-        SharedPreferences prefs = getActivity().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-         name.setText(prefs.getString("name", BaseActivity.getFirebaseUserSignIn().getDisplayName()));
-         profileName.setText(name.getText());
+      //  SharedPreferences prefs = getActivity().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+         profileName.setText(BaseActivity.getFirebaseUserSignIn().getDisplayName());
+      //  profileName.setText(name.getText());
        //  notif_switch.setChecked(prefs.getBoolean("notification", true));
 
-        setNameListener();
+       // setNameListener();
 
         //   notif_switch.setTextOn(getResources().getString(R.string.on));
         //    notif_switch.setTextOff(getResources().getString(R.string.off));
@@ -126,9 +125,10 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
         Glide.with(this)
                 .load(BaseActivity.getFirebaseUserSignIn().getPhotoUrl())
                 .bitmapTransform(new CropCircleTransformation(getActivity()))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .error(R.drawable.no_photo)
                 .placeholder(R.drawable.no_photo)
-                .into( profilePicture);
+                .into(profilePicture);
 
     }
 
@@ -383,7 +383,7 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
 
     private void saveProfilePicture(final Uri uri) {
         // Create a reference to "mountains.jpg"
-        StorageReference mountainsRef =((BaseActivity)getActivity()).storageRef.child("test.jpg");
+        StorageReference storageRef =((BaseActivity)getActivity()).storageRef.child(name.getText().toString() +".jpg");
         // Get the data from an ImageView as bytes
         profilePicture.setDrawingCacheEnabled(true);
         profilePicture.buildDrawingCache();
@@ -392,7 +392,7 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
-        UploadTask uploadTask = mountainsRef.putFile(uri);
+        UploadTask uploadTask = storageRef.putFile(uri);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
@@ -523,17 +523,11 @@ public class ProfileFragment extends Fragment  implements View.OnClickListener{
        final Dialog dialog_card = new Dialog(getActivity());
         dialog_card.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog_card.setContentView(R.layout.popup_profile_camera);
-        dialog_card.getWindow().setGravity(Gravity.BOTTOM);
+        dialog_card.getWindow().setGravity(Gravity.CENTER);
         dialog_card.getWindow().setBackgroundDrawable(
                 new ColorDrawable(android.graphics.Color.TRANSPARENT));
         dialog_card.getWindow().setDimAmount(0.6f);
 
-        dialog_card.findViewById(R.id.popup_profile_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                dialog_card.dismiss();
-            }
-        });
 
         dialog_card.findViewById(R.id.popup_profile_upload_a_picture).
                 setOnClickListener(new View.OnClickListener() {

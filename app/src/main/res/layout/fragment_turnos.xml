@@ -7,8 +7,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--android:layout_marginBottom="?attr/actionBarSize"-->
-
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/main_recycler_view"
@@ -94,13 +92,6 @@
             android:textSize="18sp"
             app:typeface="Roboto_Bold"
             android:text="@string/todos_disponibles"/>
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:scaleType="fitXY"
-            android:tint="@color/accent"
-            android:layout_marginTop="10dp"
-            android:src="@drawable/profile_selected_icon"/>
     </LinearLayout>
 
 </RelativeLayout>

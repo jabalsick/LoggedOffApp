@@ -2,38 +2,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:gravity="center_horizontal"
+    android:background="@null"
     tools:context="com.fdv.loggedoff.Activtys.PrincipalActivity">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@null"
-        android:gravity="bottom"
-        android:orientation="vertical">
-
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_centerInParent="true"
+    android:orientation="horizontal"
+    android:layout_height="wrap_content">
         <ImageButton
             android:id="@+id/popup_profile_upload_a_picture"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/gallery"
+            android:tint="@color/colorAccent"
             android:textSize="18sp" />
 
         <ImageButton
             android:id="@+id/popup_profile_take_a_picture"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textColor="@color/mb_white"
-            android:layout_height="wrap_content"
+
+            android:tint="@color/colorAccent"
             android:src="@drawable/ic_add_a_photo_black"
-            android:textSize="18sp" />
-
-        <ImageButton
-            android:id="@+id/popup_profile_cancel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_cancel_black_48dp"
-            android:textSize="18sp" />
-
+            android:textSize="18sp"
+            android:layout_toLeftOf="@id/popup_profile_upload_a_picture" />
     </LinearLayout>
+
 </RelativeLayout>
