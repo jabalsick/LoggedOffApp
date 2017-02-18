@@ -168,7 +168,7 @@ public class TurnosFragment extends Fragment {
              viewHolder.btnAvisar.setOnClickListener(new View.OnClickListener() {
                    @Override
                    public void onClick(View v) {
-                    avisar(viewHolder.personNameView.toString(),turno.getMail(),
+                    avisar(viewHolder.personNameView.getText().toString(),turno.getMail(),
                             viewHolder.personTurnView.getText().toString());
                    }
                });
@@ -266,8 +266,8 @@ public class TurnosFragment extends Fragment {
         Map<String, Object> nombre = new HashMap<String, Object>();
         nombre.put("nombre", BaseActivity.getSignInAccount().getDisplayName());
         nombre.put("profile_photo",BaseActivity.getSignInAccount().getPhotoUrl() != null ?BaseActivity.getSignInAccount().getPhotoUrl().toString():"EMPTY");
-        nombre.put("mail",BaseActivity.getSignInAccount().getEmail());
-        nombre.put("uid", BaseActivity.getSignInAccount().getUid());
+        nombre.put("mail",BaseActivity.getFirebaseUserSignIn().getEmail());
+        nombre.put("uid", BaseActivity.getFirebaseUserSignIn().getUid());
         nombre.put("asigned",true);
         hourRef.updateChildren(nombre);
 
