@@ -1,5 +1,7 @@
 package com.fdv.loggedoff.Services;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.Ringtone;
@@ -18,6 +20,13 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         Ringtone ringtone = RingtoneManager.getRingtone(context, uri);
         ringtone.play();
+
+
+        //this will send a notification message
+        ComponentName comp = new ComponentName(context.getPackageName(),
+                AlarmService.class.getName());
+        startWakefulService(context, (intent.setComponent(comp)));
+        setResultCode(Activity.RESULT_OK);
     }
 
 

@@ -46,6 +46,7 @@ dependencies {
     compile 'com.google.firebase:firebase-crash:9.0.2'
     compile 'konifar:fab-transformation:1.0.0'
     compile files('libs/activation.jar')
+    compile 'com.tapadoo.android:alerter:1.0.1'
    /* compile files('libs/nineoldandroids-2.4.0.jar')*/
 
 }

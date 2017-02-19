@@ -301,10 +301,13 @@ public class TurnosFragment extends Fragment {
         String minutes = time[1];
 
         Calendar now = Calendar.getInstance();
-        now.set(Calendar.HOUR_OF_DAY,Integer.parseInt(hour));
-        now.set(Calendar.MINUTE, Integer.parseInt(minutes));
+ /*       now.set(Calendar.HOUR_OF_DAY,Integer.parseInt(hour));
+        now.set(Calendar.MINUTE, Integer.parseInt(minutes));*/
 
-        now.add(Calendar.MINUTE,-5);
+
+        now.set(Calendar.HOUR_OF_DAY,18);
+        now.add(Calendar.MINUTE,+1);
+      //  now.add(Calendar.MINUTE,-5);
         setAlarm(now);
 
     }

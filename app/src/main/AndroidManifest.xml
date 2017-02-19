@@ -47,6 +47,9 @@
         </service>
 
         <receiver android:name=".Services.NotificationPublisher" />
+        <service
+            android:name=".Services.AlarmService"
+            android:enabled="true" />
         <receiver android:name=".Services.AlarmReceiver"/>
     </application>
 

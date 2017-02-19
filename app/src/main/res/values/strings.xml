@@ -44,8 +44,8 @@
     <string name="screen3_title">Listo!</string>
     <string name="screen3_desc">Elegí tu mejor horario y desconectate!</string>
     <string name="title">Sign Up</string>
-    <string name="profile">Profile</string>
-    <string name="turnos">Turnos</string>
+    <string name="profile">PROFILE</string>
+    <string name="turnos">TURNOS</string>
     <string name="listado">Listado de Turnos</string>
     <string name="notifications">Notificaciones</string>
     <string name="mail_notifications">Notificaciones</string>

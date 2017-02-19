@@ -1,6 +1,9 @@
 package com.fdv.loggedoff.Activtys;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -14,10 +17,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fdv.loggedoff.Adapters.PagerAdapter;
 import com.fdv.loggedoff.Model.Turno;
 import com.fdv.loggedoff.R;
+import com.fdv.loggedoff.Services.AlarmReceiver;
 import com.fdv.loggedoff.Utils.DateUtils;
 import com.fdv.loggedoff.Views.CustomTextView;
 import com.google.android.gms.auth.api.Auth;
@@ -30,6 +35,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.tapadoo.alerter.Alerter;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -88,6 +94,13 @@ public class PrincipalActivity  extends BaseActivity {
 
         checkScheduler();
 
+        checkForAlarmNotification();
+    }
+
+    private void checkForAlarmNotification() {
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        PendingIntent.getBroadcast(this, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT).cancel();
     }
 
     private void setupTabTurnCounter() {
@@ -149,50 +162,24 @@ public class PrincipalActivity  extends BaseActivity {
 
 
     public void setupSelectedTab(TabLayout.Tab tab){
-
-
         ((TextView)tab.getCustomView().findViewById(R.id.text_tab)).
                 setTextColor(getResources().getColor(R.color.colorAccent));
-        if(((TextView)tab.getCustomView().findViewById(R.id.text_tab)).getText()
-                .equals(getResources().getString(R.string.turnos))){
-            (((TextView)tab.getCustomView().findViewById(R.id.text_tab)))
-                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.turnos_selected_icon, 0, 0, 0);
-
-
-        }else{
-            (((TextView)tab.getCustomView().findViewById(R.id.text_tab)))
-                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.profile_selected_icon, 0, 0, 0);
-        }
-
     }
 
     public void setupUnSelectedTab(TabLayout.Tab tab){
         ((TextView)tab.getCustomView().findViewById(R.id.text_tab)).
                 setTextColor(getResources().getColor(R.color.mb_white));
-
-        if(((TextView)tab.getCustomView().findViewById(R.id.text_tab)).getText()
-                .equals(getResources().getString(R.string.turnos))){
-            (((TextView)tab.getCustomView().findViewById(R.id.text_tab)))
-                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.turnos_seated_icon_24, 0, 0, 0);
-        }else{
-            (((TextView)tab.getCustomView().findViewById(R.id.text_tab)))
-                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.profile_icon_24, 0, 0, 0);
-        }
-
     }
 
 
     private void setupTabIcons() {
-
         LinearLayout tab1 = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab_with_counter, null);
         ((TextView)tab1.findViewById(R.id.text_tab)).setText(R.string.turnos);
         ((TextView)tab1.findViewById(R.id.text_tab)).setTextColor(getResources().getColor(R.color.colorAccent));
-        ((TextView)tab1.findViewById(R.id.text_tab)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.turnos_selected_icon, 0, 0, 0);
         tabLayout.getTabAt(0).setCustomView(tab1);
 
         LinearLayout tab2 = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
         ((TextView)tab2.findViewById(R.id.text_tab)).setText(R.string.profile);
-        ((TextView)tab2.findViewById(R.id.text_tab)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.profile_icon_24, 0, 0, 0);
         tabLayout.getTabAt(1).setCustomView(tab2);
 
     }
