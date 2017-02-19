@@ -275,6 +275,7 @@ public class TurnosFragment extends Fragment {
         nombre.put("asigned",false);
         hourRef.updateChildren(nombre);
 
+        cancelAlarm();
         ((PrincipalActivity) getActivity()).sendMail("diego.blajackis@fdvsolutions.com",who + " dejó libre el turno de " + horario," ");
     }
     public void asignTurn(String horario){
@@ -289,6 +290,7 @@ public class TurnosFragment extends Fragment {
         nombre.put("asigned",true);
         hourRef.updateChildren(nombre);
 
+
        scheduleAlarmNotification(horario);
     }
 
@@ -298,15 +300,16 @@ public class TurnosFragment extends Fragment {
         String hour = time[0];
         String minutes = time[1];
 
-        setAlarm(Integer.parseInt(hour),Integer.parseInt(minutes));
-        setAlarm(21,24);
+        Calendar now = Calendar.getInstance();
+        now.set(Calendar.HOUR_OF_DAY,Integer.parseInt(hour));
+        now.set(Calendar.MINUTE, Integer.parseInt(minutes));
+
+        now.add(Calendar.MINUTE,-5);
+        setAlarm(now);
 
     }
 
-    private void setAlarm(int timeHour,int timeMinute){
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, timeHour);
-        calendar.set(Calendar.MINUTE, timeMinute);
+    private void setAlarm(Calendar calendar){
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
     private void cancelAlarm() {
