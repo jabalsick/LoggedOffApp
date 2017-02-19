@@ -1,7 +1,10 @@
 package com.fdv.loggedoff.Fragments;
 
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -20,6 +23,7 @@ import com.fdv.loggedoff.Activtys.BaseActivity;
 import com.fdv.loggedoff.Activtys.PrincipalActivity;
 import com.fdv.loggedoff.Model.Turno;
 import com.fdv.loggedoff.R;
+import com.fdv.loggedoff.Services.AlarmReceiver;
 import com.fdv.loggedoff.Utils.CropCircleTransformation;
 import com.fdv.loggedoff.Utils.DateUtils;
 import com.fdv.loggedoff.Utils.NotificationUtils;
@@ -35,9 +39,12 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.konifar.fab_transformation.FabTransformation;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.content.Context.ALARM_SERVICE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,7 +55,6 @@ public class TurnosFragment extends Fragment {
     public static final String FREE_TURN_STRING = "LIBRE";
     public static final String MAIL_OFICINAS = "oficinas";
     private String dateNode;
-    private View rootView;
     private Context mContext;
     private RecyclerView turnosFreeRecycler;
     private RecyclerView mainRecyclerView;
@@ -60,7 +66,12 @@ public class TurnosFragment extends Fragment {
     private FirebaseRecyclerAdapter<Turno,TurnoFreeViewHolder> mFreeAdapter;
     private FirebaseRecyclerAdapter<Turno,TurnoViewHolder> mTurnAdapter;
     static boolean hasTurnSelected = false;
-   static Query freeQuery;
+    static Query freeQuery;
+
+
+    AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
+
     public TurnosFragment() {
     }
 
@@ -69,11 +80,11 @@ public class TurnosFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        rootView = inflater.inflate(R.layout.fragment_turnos, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_turnos, container, false);
         mContext = rootView.getContext();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        turnosFreeRecycler = (RecyclerView)rootView.findViewById(R.id.my_turn_recycler_view);
-        mainRecyclerView = (RecyclerView)rootView.findViewById(R.id.main_recycler_view);
+        turnosFreeRecycler = (RecyclerView) rootView.findViewById(R.id.my_turn_recycler_view);
+        mainRecyclerView = (RecyclerView) rootView.findViewById(R.id.main_recycler_view);
         mainRecyclerView.setHasFixedSize(true);
         turnosFreeRecycler.setHasFixedSize(true);
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
@@ -88,6 +99,13 @@ public class TurnosFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupListeners();
+        setupAlarmManager();
+    }
+
+    private void setupAlarmManager() {
+        alarmManager = (AlarmManager) mContext.getSystemService(ALARM_SERVICE);
+        Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(mContext, 0, alarmIntent, 0);
     }
 
     private void setupListeners() {
@@ -271,8 +289,32 @@ public class TurnosFragment extends Fragment {
         nombre.put("asigned",true);
         hourRef.updateChildren(nombre);
 
-       // NotificationUtils.scheduleNotification(NotificationUtils.getNotification("Recordatorio","En 5 minutos es tu turno de masajes"),30000);
+       scheduleAlarmNotification(horario);
     }
+
+    private void scheduleAlarmNotification(String hora) {
+
+        String[] time = hora.split(":");
+        String hour = time[0];
+        String minutes = time[1];
+
+        setAlarm(Integer.parseInt(hour),Integer.parseInt(minutes));
+        setAlarm(21,24);
+
+    }
+
+    private void setAlarm(int timeHour,int timeMinute){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, timeHour);
+        calendar.set(Calendar.MINUTE, timeMinute);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+    }
+    private void cancelAlarm() {
+        if (alarmManager!= null) {
+            alarmManager.cancel(pendingIntent);
+        }
+    }
+
     public void avisar(String aQuienLlama,String email,String hora){
         ((PrincipalActivity) getActivity()).sendMail(email, aQuienLlama + " : " + ((PrincipalActivity) getActivity()).getmUser().getName()
                 + " te recuerda que a las "
@@ -329,4 +371,6 @@ public class TurnosFragment extends Fragment {
                     }
                 });
     }
+
+
 }
